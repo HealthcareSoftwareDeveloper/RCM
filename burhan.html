@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>برهان نماء — بحث مُسنَد يقوده Claude من الويب الحيّ · منصّة نماء</title>
+<meta name="description" content="برهان نماء — اسأل أي سؤال فيبحث Claude في الويب الحيّ عبر Parallel، ويقرأ المصادر، ويجيبك بإجابة مُسنَدة برقم المصدر في كل جملة">
+<link rel="icon" href="assets/burhan-logo.svg" type="image/svg+xml">
+<style>
+:root{
+  --bg:#eff4f9; --surface:#f6f9fc; --card:#ffffff; --border:#d6e2ed; --border-strong:#c3d4e2;
+  --accent:#1b6fa8; --accent-dim:rgba(27,111,168,.09);
+  --green:#0b7a5e; --green-dim:rgba(11,122,94,.10); --red:#c4362f; --amber:#96590f;
+  --text:#12384f; --muted:#5a7085; --muted2:#456076;
+  --shadow:0 1px 3px rgba(18,56,79,.07), 0 8px 24px rgba(18,56,79,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"IBM Plex Sans Arabic","Segoe UI",Tahoma,"Noto Sans Arabic",Arial,sans-serif;
+  background:var(--bg);color:var(--text);line-height:1.85;padding:22px 16px 30px;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:900px;margin:0 auto}
+a{color:var(--accent)}
+button{font-family:inherit}
+
+.head{text-align:center;margin-bottom:18px}
+.org-logo{height:60px;width:auto;display:block;margin:0 auto 12px}
+.badge{display:inline-flex;gap:6px;background:var(--accent-dim);border:1px solid rgba(27,111,168,.22);
+  color:var(--accent);font-size:11px;font-weight:600;padding:4px 14px;border-radius:20px;margin-bottom:10px}
+.brand{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:5px}
+.brand-mark{width:50px;height:50px;flex-shrink:0}
+.brand-text{text-align:right;line-height:1}
+.brand-text .ar{font-size:24px;font-weight:700;color:var(--text);margin:0}
+.brand-text .en{display:block;font-size:10px;font-weight:600;letter-spacing:3px;color:var(--accent);margin-top:5px}
+.tagline{font-size:13.5px;color:var(--muted2)}
+.navlinks{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.navlinks a{font-size:12px;font-weight:600;background:var(--card);border:1px solid var(--border);
+  border-radius:20px;padding:6px 15px;text-decoration:none;color:var(--muted2)}
+.navlinks a:hover{border-color:var(--accent);color:var(--accent)}
+.navlinks a.on{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* صندوق السؤال */
+.ask{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);
+  padding:14px;position:sticky;top:10px;z-index:5}
+.ask textarea{width:100%;border:0;outline:0;resize:none;font:inherit;font-size:15.5px;color:var(--text);
+  background:transparent;min-height:52px;max-height:200px;line-height:1.7}
+.ask textarea::placeholder{color:var(--muted)}
+.ask-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px;border-top:1px solid var(--border);padding-top:10px}
+.seg{display:inline-flex;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2px}
+.seg button{border:0;background:transparent;color:var(--muted2);font-size:12px;font-weight:600;
+  padding:5px 13px;border-radius:18px;cursor:pointer}
+.seg button.on{background:var(--accent);color:#fff}
+.chip-btn{border:1px solid var(--border);background:var(--card);color:var(--muted2);font-size:12px;font-weight:600;
+  padding:6px 12px;border-radius:20px;cursor:pointer}
+.chip-btn:hover{border-color:var(--accent);color:var(--accent)}
+.spacer{flex:1}
+.model-tag{font-size:11px;color:var(--muted)}
+.go{border:0;background:var(--accent);color:#fff;font-weight:700;font-size:14px;padding:9px 22px;border-radius:12px;cursor:pointer}
+.go:disabled{opacity:.55;cursor:not-allowed}
+.go.stop{background:var(--red)}
+
+.notice{background:#fff8ec;border:1px solid #edd3a6;color:#6d4307;border-radius:12px;padding:12px 14px;
+  font-size:13px;margin:12px 0}
+.notice button{margin-inline-start:6px}
+
+.suggest{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:16px 0 4px}
+.suggest button{border:1px solid var(--border);background:var(--card);color:var(--text);font-size:12.5px;
+  padding:8px 14px;border-radius:20px;cursor:pointer;text-align:right}
+.suggest button:hover{border-color:var(--accent);color:var(--accent)}
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+.how div{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;font-size:12.5px;color:var(--muted2)}
+.how b{display:block;color:var(--text);font-size:13px;margin-bottom:3px}
+@media (max-width:640px){.how{grid-template-columns:1fr}.ask{position:static}}
+
+/* المحادثة */
+.thread{margin-top:18px;display:flex;flex-direction:column;gap:18px}
+.q{font-size:17px;font-weight:700;color:var(--text);padding:0 4px}
+.qa{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:16px 18px}
+.trail{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin:10px 0 14px;font-size:12.5px}
+.trail summary{cursor:pointer;padding:9px 12px;color:var(--muted2);font-weight:600;list-style:none;display:flex;align-items:center;gap:8px}
+.trail summary::-webkit-details-marker{display:none}
+.trail summary::before{content:"▸";transition:transform .15s;display:inline-block}
+.trail[open] summary::before{transform:rotate(90deg)}
+.trail ol{list-style:none;padding:0 12px 10px;display:flex;flex-direction:column;gap:6px}
+.trail li{display:flex;gap:8px;align-items:flex-start;color:var(--muted2)}
+.trail li .ic{flex-shrink:0;width:20px;text-align:center}
+.trail li .qs{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
+.trail li .qs span{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1px 8px;font-size:11.5px;direction:auto}
+.trail li.done .ic{color:var(--green)}
+.trail li.err .ic{color:var(--red)}
+.trail li.note{font-style:italic}
+.spin{display:inline-block;width:12px;height:12px;border:2px solid var(--border-strong);border-top-color:var(--accent);
+  border-radius:50%;animation:sp .8s linear infinite;vertical-align:middle}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+.answer{font-size:14.8px;line-height:1.95}
+.answer h2,.answer h3{font-size:15.5px;margin:16px 0 6px;color:var(--text)}
+.answer h3{font-size:14.5px}
+.answer p{margin:0 0 10px}
+.answer ul,.answer ol{margin:0 0 10px;padding-inline-start:22px}
+.answer li{margin-bottom:4px}
+.answer code{background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:0 5px;font-size:13px;direction:ltr;unicode-bidi:embed}
+.answer table{border-collapse:collapse;margin:8px 0 12px;font-size:13px;width:100%;display:block;overflow-x:auto}
+.answer th,.answer td{border:1px solid var(--border);padding:5px 9px;text-align:right}
+.answer th{background:var(--surface)}
+.answer.streaming::after{content:"▍";color:var(--accent);animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+a.cite{display:inline-flex;align-items:center;justify-content:center;min-width:19px;height:19px;padding:0 5px;
+  margin:0 2px;font-size:11px;font-weight:700;background:var(--accent-dim);border:1px solid rgba(27,111,168,.25);
+  color:var(--accent);border-radius:10px;text-decoration:none;vertical-align:2px;line-height:1}
+a.cite:hover{background:var(--accent);color:#fff}
+a.cite.bad{background:#fbeaea;border-color:#f0c4c1;color:var(--red)}
+.general{background:#f4f1fb;border-inline-start:3px solid #6a4fa8;padding:2px 8px;border-radius:4px}
+
+.err-box{background:#fbeaea;border:1px solid #f0c4c1;color:#8a231d;border-radius:10px;padding:10px 12px;font-size:13px}
+
+.srcs{margin-top:14px;border-top:1px solid var(--border);padding-top:12px}
+.srcs h4{font-size:12.5px;color:var(--muted2);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.src-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px}
+.src{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:9px 11px;font-size:12.5px;
+  text-decoration:none;color:inherit;display:block;transition:border-color .15s, box-shadow .15s}
+.src:hover{border-color:var(--accent)}
+.src.flash{box-shadow:0 0 0 3px rgba(27,111,168,.35);border-color:var(--accent)}
+.src .top{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.src .n{min-width:20px;height:20px;border-radius:10px;background:var(--accent);color:#fff;font-size:11px;font-weight:700;
+  display:inline-flex;align-items:center;justify-content:center;padding:0 5px}
+.src .host{color:var(--muted);font-size:11.5px;direction:ltr;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;text-align:left}
+.src .ttl{font-weight:600;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;direction:auto}
+.src .meta{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap}
+.src .meta span{font-size:10.5px;border-radius:10px;padding:1px 8px;background:var(--card);border:1px solid var(--border);color:var(--muted2)}
+.src .meta .off{background:var(--green-dim);border-color:rgba(11,122,94,.3);color:var(--green)}
+.more-srcs{margin-top:8px;font-size:12px}
+.more-srcs summary{cursor:pointer;color:var(--muted2)}
+.more-srcs .src-grid{margin-top:8px}
+
+.qa-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.qa-actions .chip-btn{font-size:11.5px;padding:4px 11px}
+.stamp{font-size:11px;color:var(--muted);margin-inline-start:auto;align-self:center}
+
+/* الإعدادات */
+dialog{border:1px solid var(--border);border-radius:16px;padding:0;max-width:560px;width:calc(100% - 24px);
+  color:var(--text);box-shadow:0 20px 60px rgba(18,56,79,.25)}
+dialog::backdrop{background:rgba(18,56,79,.35)}
+.dlg-h{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border)}
+.dlg-h h3{font-size:16px}
+.dlg-b{padding:16px 18px;display:flex;flex-direction:column;gap:12px;max-height:70vh;overflow:auto}
+.dlg-b label{font-size:12.5px;font-weight:600;color:var(--muted2);display:block;margin-bottom:4px}
+.dlg-b input,.dlg-b select{width:100%;font:inherit;font-size:13.5px;border:1px solid var(--border-strong);border-radius:10px;
+  padding:8px 10px;background:#fff;color:var(--text)}
+.dlg-b input[dir=ltr]{text-align:left}
+.dlg-b .hint{font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.7}
+.dlg-f{display:flex;gap:8px;padding:12px 18px;border-top:1px solid var(--border);flex-wrap:wrap}
+.x{border:0;background:transparent;font-size:20px;color:var(--muted);cursor:pointer}
+.check{font-size:12.5px;padding:8px 10px;border-radius:10px;display:none}
+.check.ok{display:block;background:var(--green-dim);color:var(--green)}
+.check.bad{display:block;background:#fbeaea;color:var(--red)}
+.only-direct,.only-gateway{display:flex;flex-direction:column;gap:12px}
+
+.foot{text-align:center;margin-top:30px;padding-top:16px;border-top:1px solid var(--border);font-size:12px;color:var(--muted)}
+.foot b{color:var(--accent)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="head">
+    <img class="org-logo" src="assets/logo.png" alt="شعار تجمع مكة المكرمة الصحي">
+    <div class="badge">إدارة أداء تنمية الإيرادات</div>
+    <div class="brand">
+      <img class="brand-mark" src="assets/burhan-logo.svg" alt="">
+      <div class="brand-text"><h1 class="ar">بُرهان نماء</h1><span class="en">NAMAA BURHAN</span></div>
+    </div>
+    <p class="tagline">اسأل.. فيبحث <b>Claude</b> في الويب الحيّ عبر <b>Parallel</b>، ويقرأ المصادر، ويجيبك بالبرهان.</p>
+    <nav class="navlinks">
+      <a href="index.html">الرئيسية</a>
+      <a href="predict.html">متنبّئ الموافقات</a>
+      <a href="claims.html">متنبّئ المطالبات</a>
+      <a href="chatbot.html">مساند نماء الذكي</a>
+      <a class="on" href="burhan.html">برهان نماء</a>
+    </nav>
+  </header>
+
+  <form class="ask" id="askForm" autocomplete="off">
+    <label class="sr" for="q">سؤالك</label>
+    <textarea id="q" rows="2" placeholder="اسأل أي شيء… مثل: ما أحدث تعاميم مجلس الضمان الصحي بشأن الموافقات المسبقة؟"></textarea>
+    <div class="ask-bar">
+      <div class="seg" role="group" aria-label="عمق البحث">
+        <button type="button" data-depth="quick">⚡ سريع</button>
+        <button type="button" data-depth="deep">🔬 معمّق</button>
+      </div>
+      <button type="button" class="chip-btn" id="newBtn" title="بدء محادثة جديدة">＋ جديد</button>
+      <button type="button" class="chip-btn" id="setBtn" title="الإعدادات">⚙ الإعدادات</button>
+      <span class="spacer"></span>
+      <span class="model-tag" id="modelTag"></span>
+      <button type="submit" class="go" id="goBtn">ابحث</button>
+    </div>
+  </form>
+
+  <div class="notice" id="setupNotice" hidden>
+    <b>برهان نماء يحتاج اتصالاً بـ Claude وParallel.</b>
+    ضع رابط بوّابة المنصّة (يحمل المفتاحين خادمياً)، أو مفتاحَيك الخاصّين، من الإعدادات.
+    <button type="button" class="chip-btn" id="setupBtn">⚙ فتح الإعدادات</button>
+  </div>
+
+  <section id="intro">
+    <div class="suggest" id="suggest"></div>
+    <div class="how">
+      <div><b>١. يخطّط Claude</b>يفكّك سؤالك ويقرّر ما يُبحث عنه، بالعربية والإنجليزية.</div>
+      <div><b>٢. يبحث Parallel</b>يجلب من الويب الحيّ مقاطع كثيفة الصلة، ويقرأ الصفحات كاملة عند الحاجة.</div>
+      <div><b>٣. إجابة بالبرهان</b>كل جملة مبنيّة على مصدر تحمل رقمه، والمصادر الرسمية مميَّزة.</div>
+    </div>
+  </section>
+
+  <main class="thread" id="thread" aria-live="polite"></main>
+
+  <div class="foot">
+    برهان نماء يعرض ما وجده في الويب ويُسنده، وليس رأياً قانونياً أو مالياً — راجع المصدر الرسمي قبل أي قرار.
+    <div style="margin-top:5px">Built and developed by: <b>Hani Alsulami</b></div>
+  </div>
+</div>
+
+<dialog id="dlg">
+  <form method="dialog" id="dlgForm">
+    <div class="dlg-h"><h3>⚙ إعدادات برهان نماء</h3><button class="x" value="close" aria-label="إغلاق">×</button></div>
+    <div class="dlg-b">
+      <div>
+        <label for="sMode">طريقة الاتصال</label>
+        <select id="sMode">
+          <option value="gateway">بوّابة المنصّة — المفتاحان على الخادم (الموصى به)</option>
+          <option value="direct">مباشر — بمفتاحَيّ الخاصّين</option>
+        </select>
+      </div>
+      <div class="only-gateway">
+        <div>
+          <label for="sGateway">رابط البوّابة</label>
+          <input id="sGateway" dir="ltr" placeholder="https://<مشروعك>.deno.dev">
+          <div class="hint">انشر <code>gateway/burhan-gateway.js</code> على Deno Deploy أو Cloudflare، أو اربط المستودع بـ Vercel
+            (<code>https://&lt;مشروعك&gt;.vercel.app/api/burhan</code>). الدليل في <code>gateway/README.md</code>.</div>
+        </div>
+        <div>
+          <label for="sToken">رمز دخول الفريق (إن ضُبط في البوّابة)</label>
+          <input id="sToken" type="password" dir="ltr" placeholder="اختياري">
+        </div>
+      </div>
+      <div class="only-direct">
+        <div>
+          <label for="sAnth">مفتاح Anthropic (Claude)</label>
+          <input id="sAnth" type="password" dir="ltr" placeholder="sk-ant-…">
+        </div>
+        <div>
+          <label for="sPar">مفتاح Parallel</label>
+          <input id="sPar" type="password" dir="ltr" placeholder="…">
+          <div class="hint">المفتاحان يُحفظان في متصفّحك وحده، ولا يُرسلان إلا لمزوّدَيهما.
+            إن لم يقبل Parallel الطلب المباشر من المتصفّح فاستعمل البوّابة.</div>
+        </div>
+      </div>
+      <div>
+        <label for="sModel">النموذج</label>
+        <select id="sModel"></select>
+      </div>
+      <div class="check" id="checkOut"></div>
+    </div>
+    <div class="dlg-f">
+      <button type="button" class="go" id="saveBtn">حفظ</button>
+      <button type="button" class="chip-btn" id="testBtn">اختبار الاتصال</button>
+      <span class="spacer"></span>
+      <button type="button" class="chip-btn" id="clearBtn">مسح إعداداتي</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="assets/site-config.js"></script>
+<script src="assets/burhan.js"></script>
+<script>
+(function () {
+  "use strict";
+  var B = window.NamaaBurhan;
+  var $ = function (id) { return document.getElementById(id); };
+  var cfg = B.loadCfg();
+  var session = new B.Session();
+  var busy = false, stopFlag = false, qCounter = 0;
+
+  var SUGGESTIONS = [
+    "ما أحدث تعاميم مجلس الضمان الصحي بشأن الموافقات المسبقة؟",
+    "ما متطلبات منصّة نفيس NPHIES لتقديم المطالبات وأسباب رفضها الشائعة؟",
+    "كيف تُطبَّق نماذج الدفع المبني على القيمة (DRG / ACO) في المملكة؟",
+    "ما أفضل الممارسات العالمية لخفض نسبة رفض المطالبات التأمينية؟",
+    "ما وضع تمويل المطالبات الطبية (Claims Factoring) في السعودية؟",
+  ];
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  // ── عرض Markdown مختصر وآمن (الهروب أولاً ثم التنسيق) ──
+  function inline(s, qid) {
+    s = esc(s);
+    s = s.replace(/`([^`]+)`/g, "<code>$1</code>");
+    s = s.replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>");
+    s = s.replace(/(^|[^*])\*([^*\n]+)\*/g, "$1<i>$2</i>");
+    s = s.replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    s = s.replace(/\[(\d{1,3}(?:\s*[,،]\s*\d{1,3})*)\]/g, function (m, g) {
+      return g.split(/[,،]/).map(function (x) {
+        var n = parseInt(x, 10), src = session.sources.get(n);
+        if (!src) return '<a class="cite bad" title="رقم مصدر غير معروف">' + n + "</a>";
+        return '<a class="cite" href="#src-' + qid + "-" + n + '" data-n="' + n + '" title="' +
+          esc(src.title + " — " + src.host) + '">' + n + "</a>";
+      }).join("");
+    });
+    s = s.replace(/(من المعرفة العامة:)/g, '<span class="general">$1</span>');
+    return s;
+  }
+
+  function md(text, qid) {
+    var lines = String(text || "").split(/\r?\n/), out = [], list = null, para = [], table = null;
+    function flushPara() { if (para.length) { out.push("<p>" + para.map(function (l) { return inline(l, qid); }).join("<br>") + "</p>"); para = []; } }
+    function flushList() { if (list) { out.push("<" + list.t + ">" + list.items.map(function (i) { return "<li>" + inline(i, qid) + "</li>"; }).join("") + "</" + list.t + ">"); list = null; } }
+    function flushTable() {
+      if (!table) return;
+      var rows = table.filter(function (r) { return !/^\s*\|?\s*:?-{2,}/.test(r); }).map(function (r) {
+        return r.replace(/^\s*\|/, "").replace(/\|\s*$/, "").split("|");
+      });
+      var h = "<table><thead><tr>" + rows[0].map(function (c) { return "<th>" + inline(c.trim(), qid) + "</th>"; }).join("") + "</tr></thead><tbody>";
+      rows.slice(1).forEach(function (r) { h += "<tr>" + r.map(function (c) { return "<td>" + inline(c.trim(), qid) + "</td>"; }).join("") + "</tr>"; });
+      out.push(h + "</tbody></table>"); table = null;
+    }
+    lines.forEach(function (l) {
+      var m;
+      if (/^\s*\|.*\|\s*$/.test(l)) { flushPara(); flushList(); (table = table || []).push(l); return; }
+      flushTable();
+      if (!l.trim()) { flushPara(); flushList(); return; }
+      if ((m = l.match(/^\s*(#{1,4})\s+(.*)$/))) {
+        flushPara(); flushList();
+        out.push("<" + (m[1].length <= 2 ? "h2" : "h3") + ">" + inline(m[2], qid) + "</" + (m[1].length <= 2 ? "h2" : "h3") + ">");
+        return;
+      }
+      if ((m = l.match(/^\s*[-•*]\s+(.*)$/))) {
+        flushPara(); if (list && list.t !== "ul") flushList();
+        list = list || { t: "ul", items: [] }; list.items.push(m[1]); return;
+      }
+      if ((m = l.match(/^\s*(?:\d+|[٠-٩]+)[.)]\s+(.*)$/))) {
+        flushPara(); if (list && list.t !== "ol") flushList();
+        list = list || { t: "ol", items: [] }; list.items.push(m[1]); return;
+      }
+      if (list && /^\s{2,}\S/.test(l)) { list.items[list.items.length - 1] += " " + l.trim(); return; }
+      flushList(); para.push(l);
+    });
+    flushTable(); flushPara(); flushList();
+    return out.join("");
+  }
+
+  // ── بطاقات المصادر ──
+  function srcCard(s, qid) {
+    return '<a class="src" id="src-' + qid + "-" + s.n + '" href="' + esc(s.url) + '" target="_blank" rel="noopener">' +
+      '<div class="top"><span class="n">' + s.n + '</span><span class="host">' + esc(s.host) + "</span></div>" +
+      '<div class="ttl">' + esc(s.title) + "</div>" +
+      '<div class="meta">' + (s.official ? '<span class="off">جهة رسمية</span>' : "") +
+      (s.date ? "<span>" + esc(s.date) + "</span>" : "") + "</div></a>";
+  }
+
+  function sourcesHtml(cited, seenBefore, qid) {
+    var all = session.sources.items;
+    var citedSet = {};
+    cited.forEach(function (n) { citedSet[n] = 1; });
+    var citedItems = cited.map(function (n) { return session.sources.get(n); }).filter(Boolean);
+    var others = all.filter(function (s) { return !citedSet[s.n] && s.n > seenBefore; });
+    if (!citedItems.length && !others.length) return "";
+    var h = '<div class="srcs">';
+    if (citedItems.length) {
+      h += "<h4>📚 المصادر المستشهد بها (" + citedItems.length + ")</h4><div class=\"src-grid\">" +
+        citedItems.map(function (s) { return srcCard(s, qid); }).join("") + "</div>";
+    }
+    if (others.length) {
+      h += '<details class="more-srcs"><summary>مصادر أخرى اطّلع عليها برهان (' + others.length + ')</summary><div class="src-grid">' +
+        others.map(function (s) { return srcCard(s, qid); }).join("") + "</div></details>";
+    }
+    return h + "</div>";
+  }
+
+  // ── السؤال ──
+  function ask(question) {
+    question = String(question || "").trim();
+    if (!question || busy) return;
+    cfg = B.loadCfg();
+    if (!B.ready(cfg)) { paintNotice(); openSettings(); return; }
+
+    $("intro").hidden = true;
+    var qid = "q" + (++qCounter);
+    var seenBefore = session.sources.items.length;
+    var t0 = Date.now();
+    var box = document.createElement("article");
+    box.className = "qa";
+    box.innerHTML =
+      '<div class="q">' + esc(question) + "</div>" +
+      '<details class="trail" open><summary><span class="spin"></span> <span class="trail-sum">يخطّط Claude للبحث…</span></summary><ol></ol></details>' +
+      '<div class="answer streaming"></div><div class="srcs-slot"></div>' +
+      '<div class="qa-actions" hidden></div>';
+    $("thread").appendChild(box);
+    box.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    var trail = box.querySelector(".trail ol"), sum = box.querySelector(".trail-sum");
+    var ansEl = box.querySelector(".answer");
+    var buf = "", nSearch = 0, nExtract = 0, pendingLi = [];
+    var rafPending = false;
+
+    function paintAnswer() {
+      rafPending = false;
+      ansEl.innerHTML = md(buf, qid);
+    }
+    function addStep(icon, html, cls) {
+      var li = document.createElement("li");
+      if (cls) li.className = cls;
+      li.innerHTML = '<span class="ic">' + icon + "</span><div>" + html + "</div>";
+      trail.appendChild(li);
+      return li;
+    }
+
+    setBusy(true);
+    stopFlag = false;
+
+    session.ask(question, cfg, {
+      onTurnStart: function () { buf = ""; ansEl.innerHTML = ""; },
+      onThinking: function () { sum.textContent = "Claude يحلّل…"; },
+      onText: function (t) {
+        if (stopFlag) return;
+        buf += t;
+        sum.textContent = "Claude يكتب الإجابة…";
+        if (!rafPending) { rafPending = true; requestAnimationFrame(paintAnswer); }
+      },
+      onTurnDiscard: function (t) {
+        addStep("💭", esc(t.trim().slice(0, 400)), "note");
+        buf = ""; ansEl.innerHTML = "";
+      },
+      onTool: function (info) {
+        if (info.kind === "search") {
+          nSearch++;
+          sum.textContent = "يبحث في الويب عبر Parallel…";
+          pendingLi.push(addStep('<span class="spin"></span>',
+            "<div>" + esc(info.label || "بحث") + '</div><div class="qs">' +
+            (info.queries || []).map(function (q) { return "<span>" + esc(q) + "</span>"; }).join("") + "</div>"));
+        } else {
+          nExtract++;
+          sum.textContent = "يقرأ الصفحات كاملة…";
+          pendingLi.push(addStep('<span class="spin"></span>',
+            "<div>قراءة: " + esc(info.label || "") + '</div><div class="qs">' +
+            (info.urls || []).map(function (u) { return "<span>" + esc(B.hostOf(u) || u) + "</span>"; }).join("") + "</div>"));
+        }
+      },
+      onToolDone: function (d) {
+        var li = pendingLi.shift();
+        if (!li) return;
+        li.className = d.error ? "err" : "done";
+        li.querySelector(".ic").innerHTML = d.error ? "✕" : (d.kind === "search" ? "🔎" : "📄");
+        if (!d.error && d.count) {
+          li.firstElementChild.nextElementSibling.insertAdjacentHTML("beforeend",
+            '<div style="font-size:11px;color:var(--muted)">' + d.count + (d.kind === "search" ? " نتيجة" : " صفحة") + "</div>");
+        }
+      },
+      onStatus: function (msg) { sum.textContent = msg; },
+    }).then(function (res) {
+      buf = res.text || buf;
+      paintAnswer();
+      ansEl.classList.remove("streaming");
+      if (res.refused) ansEl.innerHTML = '<div class="err-box">' + esc(res.text) + "</div>";
+      if (res.truncated) ansEl.insertAdjacentHTML("beforeend", '<div class="err-box">انقطعت الإجابة لطولها — اطلب إكمالها.</div>');
+      box.querySelector(".srcs-slot").innerHTML = sourcesHtml(res.cited || [], seenBefore, qid);
+      var secs = Math.round((Date.now() - t0) / 1000);
+      box.querySelector(".trail summary").innerHTML = "✓ " + esc(
+        nSearch + " عملية بحث" + (nExtract ? " · " + nExtract + " قراءة صفحات" : "") +
+        " · " + (res.cited || []).length + " مصدر مستشهد به · " + secs + " ث");
+      box.querySelector(".trail").open = false;
+      actions(box, question, res);
+    }).catch(function (e) {
+      ansEl.classList.remove("streaming");
+      ansEl.innerHTML = '<div class="err-box">' + esc(B.explain(e, e.provider || "claude")) + "</div>";
+      box.querySelector(".trail summary").innerHTML = "✕ تعذّر إكمال البحث";
+      if (e.network || e.status === 401 || e.status === 403) paintNotice(true);
+    }).then(function () { setBusy(false); $("q").focus(); });
+  }
+
+  function actions(box, question, res) {
+    var a = box.querySelector(".qa-actions");
+    a.hidden = false;
+    a.innerHTML = '<button type="button" class="chip-btn" data-act="copy">⧉ نسخ الإجابة مع المصادر</button>' +
+      '<button type="button" class="chip-btn" data-act="more">🔬 تعمّق أكثر</button>' +
+      '<span class="stamp">' + esc(B.MODELS.filter(function (m) { return m.id === cfg.model; }).map(function (m) { return m.label.split(" — ")[0]; })[0] || cfg.model) +
+      " · Parallel · " + new Date().toLocaleString("ar-SA-u-ca-gregory-nu-latn", { dateStyle: "medium", timeStyle: "short" }) + "</span>";
+    a.onclick = function (ev) {
+      var act = ev.target && ev.target.getAttribute("data-act");
+      if (act === "copy") {
+        var refs = (res.cited || []).map(function (n) {
+          var s = session.sources.get(n); return s ? "[" + n + "] " + s.title + " — " + s.url : "";
+        }).filter(Boolean).join("\n");
+        var txt = question + "\n\n" + (res.text || "") + (refs ? "\n\nالمصادر:\n" + refs : "");
+        (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(function () {
+          ev.target.textContent = "✓ نُسخت";
+        }, function () { ev.target.textContent = "تعذّر النسخ"; });
+      } else if (act === "more") {
+        ask("تعمّق أكثر في السؤال السابق: ابحث عن مصادر رسمية وأحدث، وأكمل ما بقي غير مؤكَّد.");
+      }
+    };
+  }
+
+  function setBusy(on) {
+    busy = on;
+    var b = $("goBtn");
+    b.textContent = on ? "جارٍ البحث…" : "ابحث";
+    b.disabled = on;
+  }
+
+  // ── عمق البحث والنموذج ──
+  function paintDepth() {
+    document.querySelectorAll(".seg button").forEach(function (b) {
+      b.classList.toggle("on", b.getAttribute("data-depth") === cfg.depth);
+    });
+    var m = B.MODELS.filter(function (x) { return x.id === cfg.model; })[0];
+    $("modelTag").textContent = (m ? m.label.split(" — ")[0] : cfg.model) + " + Parallel";
+  }
+  document.querySelectorAll(".seg button").forEach(function (b) {
+    b.onclick = function () {
+      cfg = B.loadCfg();
+      cfg.depth = b.getAttribute("data-depth");
+      B.saveCfg(cfg); paintDepth();
+    };
+  });
+
+  function paintNotice(force) {
+    $("setupNotice").hidden = !force && B.ready(B.loadCfg());
+  }
+
+  // ── الإعدادات ──
+  function openSettings() {
+    cfg = B.loadCfg();
+    $("sMode").value = cfg.mode;
+    $("sGateway").value = cfg.gateway || "";
+    $("sToken").value = cfg.token || "";
+    $("sAnth").value = cfg.anthropicKey || "";
+    $("sPar").value = cfg.parallelKey || "";
+    $("sModel").value = cfg.model;
+    $("checkOut").className = "check";
+    paintMode();
+    $("dlg").showModal();
+  }
+  function readForm() {
+    var c = B.loadCfg();
+    c.mode = $("sMode").value;
+    c.gateway = $("sGateway").value.trim();
+    c.token = $("sToken").value.trim();
+    c.anthropicKey = $("sAnth").value.trim();
+    c.parallelKey = $("sPar").value.trim();
+    c.model = $("sModel").value;
+    return c;
+  }
+  function paintMode() {
+    var d = $("sMode").value === "direct";
+    document.querySelector(".only-direct").style.display = d ? "" : "none";
+    document.querySelector(".only-gateway").style.display = d ? "none" : "";
+  }
+  $("sModel").innerHTML = B.MODELS.map(function (m) {
+    return '<option value="' + m.id + '">' + esc(m.label) + "</option>";
+  }).join("");
+  $("sMode").onchange = paintMode;
+  $("setBtn").onclick = openSettings;
+  $("setupBtn").onclick = openSettings;
+  $("saveBtn").onclick = function () {
+    cfg = readForm(); B.saveCfg(cfg); paintDepth(); paintNotice(); $("dlg").close();
+  };
+  $("clearBtn").onclick = function () {
+    B.clearCfg(); cfg = B.loadCfg(); openSettings(); paintDepth(); paintNotice();
+  };
+  $("testBtn").onclick = function () {
+    var c = readForm(), out = $("checkOut");
+    out.className = "check ok"; out.textContent = "جارٍ الاختبار…";
+    if (c.mode === "direct") {
+      out.className = c.anthropicKey && c.parallelKey ? "check ok" : "check bad";
+      out.textContent = c.anthropicKey && c.parallelKey
+        ? "المفتاحان مُدخَلان — سيُختبران فعلياً مع أول سؤال."
+        : "أدخل مفتاحَي Anthropic وParallel كليهما.";
+      return;
+    }
+    if (!c.gateway) { out.className = "check bad"; out.textContent = "أدخل رابط البوّابة."; return; }
+    B.checkGateway(c).then(function (h) {
+      out.className = h.ok ? "check ok" : "check bad";
+      out.textContent = h.ok
+        ? "✓ البوّابة تعمل: مفتاح Claude ومفتاح Parallel مضبوطان."
+        : "البوّابة تعمل لكن ينقصها: " + [!h.claude && "ANTHROPIC_API_KEY", !h.parallel && "PARALLEL_API_KEY"].filter(Boolean).join(" و");
+    }).catch(function (e) {
+      out.className = "check bad";
+      out.textContent = "تعذّر الوصول إلى البوّابة: " + B.explain(e, "claude");
+    });
+  };
+
+  // ── التفاعل العام ──
+  $("askForm").onsubmit = function (e) { e.preventDefault(); var v = $("q").value; $("q").value = ""; autosize(); ask(v); };
+  $("q").addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); $("askForm").requestSubmit(); }
+  });
+  function autosize() { var t = $("q"); t.style.height = "auto"; t.style.height = Math.min(t.scrollHeight, 200) + "px"; }
+  $("q").addEventListener("input", autosize);
+  $("newBtn").onclick = function () {
+    if (busy) return;
+    session.reset(); $("thread").innerHTML = ""; $("intro").hidden = false; $("q").focus();
+  };
+  $("thread").addEventListener("click", function (e) {
+    var c = e.target.closest && e.target.closest("a.cite[data-n]");
+    if (!c) return;
+    e.preventDefault();
+    var el = document.getElementById(c.getAttribute("href").slice(1));
+    if (!el) return;
+    var det = el.closest("details"); if (det) det.open = true;
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    el.classList.add("flash"); setTimeout(function () { el.classList.remove("flash"); }, 1600);
+  });
+  $("suggest").innerHTML = SUGGESTIONS.map(function (s) {
+    return '<button type="button">' + esc(s) + "</button>";
+  }).join("");
+  $("suggest").onclick = function (e) { if (e.target.tagName === "BUTTON") ask(e.target.textContent); };
+
+  // سؤال من الرابط: burhan.html?q=… (للتضمين في Power BI وبقية صفحات المنصّة)
+  var qp = new URLSearchParams(location.search).get("q");
+  paintDepth(); paintNotice();
+  if (qp) ask(qp); else $("q").focus();
+})();
+</script>
+</body>
+</html>

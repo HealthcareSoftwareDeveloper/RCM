@@ -88,3 +88,50 @@ curl -sS "https://<بوابتك>/v1beta/models/gemini-flash-lite-latest:generate
   الترويسة. المفتاح محميّ دائماً؛ **حصّته** سقف ضررها الخطط المجانية لدى Google والمنصّة.
 - **نماذج ومسارات محصورة وحجم مسقوف** — فلا تصير البوّابة وكيلاً عاماً.
 - لميزانية يومية صارمة أو رمز دخول للفريق: إضافة صغيرة على البوّابة — اطلبها.
+
+---
+
+# بوّابة «برهان نماء» — مفتاحا Claude وParallel
+
+صفحة [`burhan.html`](../burhan.html) محرّك بحث مُسنَد: **Claude** يخطّط ويقرّر ما يُبحث عنه،
+و**Parallel** يجلب المقاطع من الويب الحيّ ويقرأ الصفحات كاملة، ثم يكتب Claude إجابة يحمل
+كل سطر فيها رقم مصدره. البوّابة [`burhan-gateway.js`](burhan-gateway.js) تحمل المفتاحين
+في مخزن الأسرار وتحقنهما خادمياً، فلا يصل أيّهما إلى أي متصفّح.
+
+| المسار | الوجهة |
+|---|---|
+| `POST /v1/messages` | `api.anthropic.com/v1/messages` — بثّ SSE، نماذج محصورة، `max_tokens` ≤ 16000 |
+| `POST /v1/search` | `api.parallel.ai/v1/search` |
+| `POST /v1/extract` | `api.parallel.ai/v1/extract` — حتى ٥ روابط |
+| `GET /health` | هل المفتاحان مضبوطان؟ (بلا كشف لهما) |
+
+## النشر — الملف نفسه على ثلاث منصّات
+
+- **Deno Deploy:** Playground جديد ← الصق `gateway/burhan-gateway.js` ← Save & Deploy.
+- **Cloudflare Workers:** Create Worker ← الصق الملف ← Deploy.
+- **Vercel:** اربط المستودع (الدالة جاهزة في [`api/burhan/[...path].js`](../api/burhan/)) —
+  رابطها `https://<مشروعك>.vercel.app/api/burhan`.
+
+ثم في متغيرات البيئة/الأسرار:
+
+| المتغيّر | |
+|---|---|
+| `ANTHROPIC_API_KEY` | **إلزامي** — من [console.anthropic.com](https://console.anthropic.com) |
+| `PARALLEL_API_KEY` | **إلزامي** — من [platform.parallel.ai](https://platform.parallel.ai) |
+| `ACCESS_TOKEN` | اختياري — رمز دخول للفريق؛ يُكتب في ⚙ إعدادات الصفحة |
+| `ALLOWED_ORIGINS` | اختياري — الافتراضي `https://hanihalsulami.github.io` |
+| `ALLOWED_MODELS` | اختياري — الافتراضي `claude-opus-5-5,claude-sonnet-5-5,claude-haiku-5-5` |
+
+## الربط
+
+ضع الرابط في `window.NAMAA_BURHAN.gateway` داخل [`assets/site-config.js`](../assets/site-config.js)
+وادفع التغيير — فيجد كل زائر برهان نماء جاهزاً. أو يضعه كل مستخدم لنفسه من ⚙ الإعدادات.
+
+```bash
+curl -sS https://<بوابتك>/health -H 'Origin: https://hanihalsulami.github.io'
+# {"ok":true,"claude":true,"parallel":true,...}
+```
+
+> **لماذا `ACCESS_TOKEN`؟** بخلاف Gemini المجاني، كل سؤال في برهان يستهلك رصيداً مدفوعاً
+> لدى Anthropic وParallel. قفل المصدر يصدّ المواقع الأخرى لكنه لا يصدّ من يستدعي البوّابة
+> من خارج متصفّح — رمز الفريق يغلق هذا الباب. منطق البوّابة مُختبَر في `tests/verify_burhan.mjs`.

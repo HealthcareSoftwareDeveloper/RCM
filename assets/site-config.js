@@ -32,3 +32,16 @@ window.NAMAA_AUDIT = {
   // token: "",
   // pinHash: "",
 };
+
+/*
+ * «برهان نماء» — بحث مُسنَد يقوده Claude ويغذّيه Parallel (burhan.html):
+ *   1) انشر gateway/burhan-gateway.js (Deno Deploy أو Cloudflare) أو اربط المستودع بـ Vercel
+ *      وضع في أسرارها ANTHROPIC_API_KEY وPARALLEL_API_KEY — لا يوضع أي مفتاح هنا أبداً.
+ *   2) ضع رابط البوّابة أدناه (Vercel: https://<مشروعك>.vercel.app/api/burhan)، ثم ادفع التغيير.
+ * ما دام الرابط فارغاً يستطيع كل مستخدم وضع بوّابته أو مفتاحَيه من ⚙ الإعدادات في الصفحة.
+ */
+window.NAMAA_BURHAN = {
+  gateway: "",                 // https://<بوابتك>
+  model: "claude-opus-5-5",    // claude-opus-5-5 | claude-sonnet-5-5 | claude-haiku-5-5
+  depth: "deep",               // quick | deep
+};

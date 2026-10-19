@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  شعار «برهان نماء» — محرّك البحث المُسنَد في منصّة نماء
+  الفكرة: عدسة بحث تحيط بعلامة تحقّق، ويخرج من العدسة ثلاثة خيوط إسناد
+  تنتهي بعُقد — الجواب لا يُقدَّم إلا ومعه برهانه.
+  اللوحة نفسها المستعملة في شعارَي المتنبّئ ومساند، بتدرّج مائل للعائلة الواحدة.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120"
+     role="img" aria-label="شعار برهان نماء — البحث المُسنَد">
+  <defs>
+    <linearGradient id="bhBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1b6fa8"/>
+      <stop offset="1" stop-color="#22d3a0"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="116" height="116" rx="28" fill="url(#bhBg)"/>
+
+  <!-- خيوط الإسناد -->
+  <g stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-opacity=".75" fill="none">
+    <path d="M76 42 L94 28"/>
+    <path d="M80 54 L98 54"/>
+    <path d="M76 66 L94 80"/>
+  </g>
+  <g fill="#fff">
+    <circle cx="96" cy="26" r="5"/>
+    <circle cx="100" cy="54" r="5"/>
+    <circle cx="96" cy="82" r="5"/>
+  </g>
+
+  <!-- العدسة -->
+  <circle cx="52" cy="54" r="26" fill="#fff" fill-opacity=".96"/>
+  <circle cx="52" cy="54" r="26" fill="none" stroke="#fff" stroke-width="5"/>
+  <path d="M33 74 L18 92" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+
+  <!-- علامة التحقّق داخل العدسة -->
+  <path d="M40 55 L49 64 L65 45" fill="none" stroke="#0b7a5e" stroke-width="7"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
