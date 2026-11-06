@@ -134,6 +134,16 @@ python3 model/train_model.py  --approvals APPROVALS.xlsx --eligibility ELIGIBILI
 
 كل ذلك في `localStorage` على جهاز المستخدم — لا شيء يغادره.
 
+
+### نسخة «ملف HTML واحد» (دون خادم ولا إنترنت)
+
+```bash
+python3 tools/build_single.py --fonts <مجلد woff2 لخط IBM Plex Sans Arabic>
+```
+
+يُخرج `dist/ARCH_Predict.html` (الموافقات) و`dist/ARCH_Predict_Claims.html` (المطالبات)، كلٌّ ملف واحد يضم المحرك والنموذج وSheetJS والخطوط.
+تتبّع الاستجابة السحابي معطّل فيها، فلا يغادر شيء الجهاز. «مساند نماء الذكي» ودليل الاستخدام غير مضمّنين.
+
 ---
 
 ## الدمج في Power BI

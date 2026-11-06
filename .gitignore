@@ -4,3 +4,4 @@ __pycache__/
 model/private/
 tests/claims_reference.json
 tests/reference.json
+dist/
