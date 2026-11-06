@@ -51,6 +51,13 @@ def font_css(fonts: pathlib.Path | None) -> str:
             if f.exists():
                 css.append("@font-face{font-family:'IBM Plex Sans Arabic';font-style:normal;font-weight:%d;"
                            "font-display:swap;src:url(%s) format('woff2');unicode-range:%s}" % (w, data_uri(f), rng))
+    kufi = fonts.parent.parent.parent / "kufi/package/files"     # vendor/kufi بجانب fontsource (اختياري)
+    for sub, rng in (("arabic", "U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF"),
+                     ("latin", "U+0000-00FF,U+2000-206F,U+20AC,U+2122")):
+        f = kufi / f"noto-kufi-arabic-{sub}-700-normal.woff2"
+        if f.exists():
+            css.append("@font-face{font-family:'Kufi';font-style:normal;font-weight:700;font-display:swap;"
+                       "src:url(%s) format('woff2');unicode-range:%s}" % (data_uri(f), rng))
     return "<style>" + "".join(css) + "</style>\n" if css else ""
 
 
@@ -67,6 +74,8 @@ def build(page: str, out: pathlib.Path, fonts: pathlib.Path | None) -> pathlib.P
         return f"<script>/* {src} */\n{safe_js(js)}\n</script>"
 
     html = re.sub(r'<script src="([^"]+)"></script>', inline_script, html)
+    html = re.sub(r'<link rel="stylesheet" href="(assets/[^"]+\.css)">',
+                  lambda m: "<style>/* %s */\n%s\n</style>" % (m.group(1), (ROOT / m.group(1)).read_text(encoding="utf-8")), html)
     # SheetJS أولاً حتى يجدها التبويب جاهزة (loadXLSX يتحقق من window.XLSX)
     html = html.replace("</head>", font_css(fonts) + f"<script>/* assets/vendor/xlsx.full.min.js */\n{xlsx}\n</script>\n</head>", 1)
 

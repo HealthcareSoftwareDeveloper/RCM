@@ -1,0 +1,85 @@
+/*!
+ * arch-shell.css — هيكل واجهة ARCH الموحّد (مطابق لـ ARCH Appeals و ARCH Precheck)
+ * ARCH Predict · ARCH Systems
+ * شريط علوي لازوردي + قائمة جانبية منزلقة + عنوان صفحة، فوق صفحات المنصّة دون المساس بمنطقها.
+ */
+:root{
+  --lapis:#14213D; --lapis-2:#1C2E54; --lapis-3:#2A4170; --keystone:#C8962E; --keystone-soft:#F6EBD3;
+  --side:268px; --tbh:64px;
+  /* ألوان المنصّة الأصلية ← لوحة ARCH */
+  --bg:#EEF1F5; --surface:#F6F8FB; --card:#ffffff; --card2:#F6F8FB;
+  --border:#DCE2EA; --border-strong:#C9D3E0;
+  --accent:#1F4E79; --accent-dim:#E6EDF6;
+  --green:#12715F; --red:#B42318; --yellow:#8A5A00; --amber:#8A5A00; --orange:#8A5A00;
+  --text:#18233A; --muted:#5E6B80; --muted2:#4F5D73;
+  --shadow:none;
+}
+body.arch{background:var(--bg);padding:0;font-family:'Plex Arabic','IBM Plex Sans Arabic','Segoe UI',Tahoma,Arial,sans-serif;font-size:14px}
+body.arch .wrap{max-width:1500px;padding:24px 32px 60px}
+body.arch .header{display:none}
+body.arch .card{border-radius:14px;box-shadow:none}
+body.arch .sec-label{color:var(--lapis);font-size:13px;letter-spacing:0}
+body.arch .btn{border-radius:9px;background:var(--lapis)}
+body.arch .btn:hover{background:var(--lapis-3)}
+body.arch .btn.ghost{background:none;border-color:#CCD5E1;color:var(--muted2)}
+body.arch .btn.ghost:hover{border-color:var(--accent);color:var(--accent)}
+body.arch th{background:#F4F6F9;color:#4F5D73}
+body.arch .note{background:var(--accent-dim);border-color:#CFDBEA;color:#1B3554}
+body.arch .chip{background:#fff;border-color:var(--border)}
+body.arch :focus-visible{outline:2px solid var(--keystone);outline-offset:2px}
+
+/* ── الشريط العلوي ── */
+.arch-topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:70;height:var(--tbh);box-sizing:border-box;display:flex;align-items:center;gap:14px;background:var(--lapis);color:#fff;padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px))}
+body.arch::before{content:'';position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:71;background:var(--lapis)}
+#menuBtn{width:44px;height:44px;border:1px solid rgba(255,255,255,.18);background:transparent;border-radius:10px;color:#fff;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
+#menuBtn:hover{background:var(--lapis-2)}
+#menuBtn svg{width:22px;height:22px;stroke:currentColor;stroke-width:2;stroke-linecap:round;fill:none}
+#menuBtn .x{display:none} body.menu-open #menuBtn .x{display:block} body.menu-open #menuBtn .bars{display:none}
+.tb-brand{display:flex;align-items:center;gap:10px;font-family:'Kufi','Noto Kufi Arabic','Plex Arabic',sans-serif}
+.tb-brand svg{width:30px;height:30px;color:#fff}
+.tb-brand b{font-size:16px}.tb-brand span{color:var(--keystone);font-size:13px}
+.tb-page{color:#B8C5DB;font-size:13.5px;margin-inline-start:auto}
+
+/* ── القائمة الجانبية ── */
+#menuScrim{position:fixed;inset:0;background:rgba(15,23,32,.38);z-index:55}
+header.arch-side{position:fixed;top:calc(var(--tbh) + env(safe-area-inset-top,0px));right:0;bottom:0;left:auto;width:min(var(--side),86vw);background:var(--lapis);color:#DCE4F2;display:flex;flex-direction:column;z-index:60;padding:20px calc(16px + env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) 16px;overflow-y:auto;transform:translateX(105%);visibility:hidden;transition:transform .22s ease,visibility 0s linear .22s;box-shadow:-12px 0 40px rgba(20,33,61,.28);box-sizing:border-box}
+body.menu-open header.arch-side{transform:none;visibility:visible;transition:transform .22s ease}
+@media (prefers-reduced-motion:reduce){header.arch-side,body.menu-open header.arch-side{transition:none}}
+.arch-side .pname-wrap{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.arch-side .mark{width:46px;height:46px;flex:none;color:#fff}
+.pname{display:flex;flex-direction:column;line-height:1.15}
+.pname b{font-family:'Kufi','Noto Kufi Arabic','Plex Arabic',sans-serif;font-size:19px;letter-spacing:.2px;color:#fff}
+.pname span{font-family:'Kufi','Noto Kufi Arabic','Plex Arabic',sans-serif;font-size:15px;color:var(--keystone)}
+.psub{margin:0 2px 16px;font-size:12.5px;color:#9FB0CC;line-height:1.6;border-bottom:1px solid rgba(255,255,255,.08);padding-bottom:16px}
+.psub span{color:#C9D4E6}
+.arch-side .tabs{display:flex;flex-direction:column;gap:2px;margin:0;justify-content:flex-start;flex-wrap:nowrap}
+.arch-side .tabs .tab,.arch-side .arch-link{display:flex;align-items:center;gap:12px;background:none;border:0;color:#B8C5DB;border-radius:10px;padding:10px 12px;text-align:right;font:inherit;font-size:14.5px;position:relative;cursor:pointer;text-decoration:none;min-height:44px;box-sizing:border-box;width:100%}
+.arch-side .tabs .tab svg,.arch-side .arch-link svg{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.arch-side .tabs .tab:hover,.arch-side .arch-link:hover{background:var(--lapis-2);color:#fff;border:0}
+.arch-side .tabs .tab.active{background:var(--lapis-3);color:#fff;font-weight:700;border:0}
+.arch-side .tabs .tab.active::before{content:'';position:absolute;right:-8px;top:8px;bottom:8px;width:4px;border-radius:4px 0 0 4px;background:var(--keystone)}
+.arch-side .group{font-size:11.5px;color:#7F92B3;margin:14px 12px 4px}
+.side-foot{margin-top:auto;display:flex;flex-direction:column;gap:10px;padding-top:16px;font-size:12px;color:#8FA2C2}
+.side-foot .aco>span{display:block;margin-bottom:6px}
+.side-foot .aco div{display:flex;flex-wrap:wrap;gap:6px}
+.side-foot .badge-code{background:rgba(255,255,255,.07);color:#DCE4F2;border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:2px 8px;font-size:12px;direction:ltr;unicode-bidi:isolate}
+.side-foot .maker{font-family:'Kufi','Noto Kufi Arabic','Plex Arabic',sans-serif;color:#C9D4E6;font-size:13px;border-top:1px solid rgba(255,255,255,.08);padding-top:12px}
+
+/* ── عنوان الصفحة والتذييل ── */
+.arch-pagehead{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;margin:0 0 6px}
+.arch-pagehead h1{font-family:'Kufi','Noto Kufi Arabic','Plex Arabic',sans-serif;font-size:26px;margin:0;color:var(--lapis);font-weight:700}
+.arch-pagehead p{margin:0;color:var(--muted);font-size:14px}
+body.arch #headChips{justify-content:flex-start;margin:6px 0 16px}
+body.arch .footer{display:none}
+footer.sig{color:var(--muted);font-size:12px;text-align:center;padding:16px}
+@media (max-width:900px){
+  body.arch .wrap{padding:14px max(16px,env(safe-area-inset-right,0px)) 60px max(16px,env(safe-area-inset-left,0px))}
+  .tb-page{display:none}
+  .arch-pagehead h1{font-size:21px}
+}
+@media print{
+  .arch-topbar,#menuScrim,header.arch-side,footer.sig,body.arch::before{display:none!important}
+  body.arch .wrap{padding:0;max-width:none}
+}
+/* وضع التضمين في Power BI يبقى كما هو */
+body.embed .arch-topbar,body.embed header.arch-side,body.embed .arch-pagehead,body.embed footer.sig{display:none!important}
