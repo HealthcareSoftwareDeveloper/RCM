@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>مُتَنَبِّئ نماء — التنبؤ بسداد المطالبات</title>
-<meta name="description" content="مُتَنَبِّئ نماء — التنبؤ بسداد المطالبة التأمينية (Claims) قبل تقديمها: هل ستُسدَّد كاملة؟ وما رمز رفض NPHIES المرجَّح؟ مع تفسير SHAP كاملاً داخل المتصفح">
+<title>ARCH Predict — التنبؤ بسداد المطالبات</title>
+<meta name="description" content="ARCH Predict — التنبؤ بسداد المطالبة التأمينية (Claims) قبل تقديمها: هل ستُسدَّد كاملة؟ وما رمز رفض NPHIES المرجَّح؟ مع تفسير SHAP كاملاً داخل المتصفح">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <style>
 :root{
-  /* لوحة مشتقّة من ألوان شعار تجمع مكة المكرمة الصحي (أزرق فولاذي ‎#4080B0‎).
+  /* لوحة ARCH Predict (أزرق فولاذي ‎#4080B0‎).
      كل لون نصّي هنا يتجاوز عتبة WCAG AA (‎4.5:1‎) على الخلفية والبطاقة معاً. */
   --bg:#eff4f9; --surface:#f6f9fc; --card:#ffffff; --card2:#f6f9fc;
   --border:#d6e2ed; --border-strong:#c3d4e2;
@@ -37,7 +37,7 @@ a{color:var(--accent)}
   border:1px solid rgba(27,111,168,.22);color:var(--accent);font-size:11px;font-weight:600;
   padding:4px 14px;border-radius:20px;margin-bottom:10px}
 .header h1{font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px}
-/* ── هوية «مُتَنَبِّئ نماء» ── */
+/* ── هوية «ARCH Predict» ── */
 .brand{display:flex;align-items:center;justify-content:center;gap:13px;margin-bottom:7px}
 .brand-mark{width:54px;height:54px;flex-shrink:0}
 .brand-text{text-align:right;line-height:1}
@@ -234,11 +234,11 @@ body.embed .wrap{max-width:100%}
 <div class="wrap">
 
 <div class="header">
-  <img class="org-logo" src="assets/logo.png" alt="شعار تجمع مكة المكرمة الصحي">
-  <div class="badge">إدارة أداء تنمية الإيرادات · مرحلة المطالبات Claims · LightGBM + SHAP</div>
+  <img class="org-logo" data-arch-org-logo alt="" hidden>
+  <div class="badge"><span data-arch-org-unit>ARCH Systems</span> · مرحلة المطالبات Claims · LightGBM + SHAP</div>
   <div class="brand">
-    <img class="brand-mark" src="assets/sadeed-logo.svg" alt="">
-    <div class="brand-text"><h1 class="ar">مُتَنَبِّئ نماء</h1><span class="en">NAMAA PREDICTOR · CLAIMS</span></div>
+    <img class="brand-mark" src="assets/arch-mark.svg" alt="">
+    <div class="brand-text"><h1 class="ar">ARCH Predict</h1><span class="en">ARCH SYSTEMS · CLAIMS</span></div>
   </div>
   <p class="tagline"><b>رؤية استباقية للمطالبات والموافقات.. نستبق القرار لنقود النمو.</b></p>
   <p class="tagline">منصة التنبؤ بسداد المطالبات التأمينية — مرحلة المطالبات</p>
@@ -419,8 +419,7 @@ body.embed .wrap{max-width:100%}
     <span>👨‍💻</span>
     <div class="footer-text"><strong>Built and developed by: Hani Alsulami</strong></div>
   </div>
-  <div class="footer-sub">تجمع مكة المكرمة الصحي · إدارة أداء تنمية الإيرادات</div>
-  <div class="footer-sub" style="opacity:.65;margin-top:2px">Makkah Health Cluster · Revenue Development Performance</div>
+  <div class="footer-sub" data-arch-org-line>ARCH Systems</div>
 </div>
 
 </div><!-- /wrap -->
@@ -440,6 +439,8 @@ window.RCM_TREES_LABELS = { approval: "نموذج سداد المطالبة", re
 <script src="assets/rcm-batch-tools.js"></script>
 <script src="assets/rcm-claims-batch.js"></script>
 <script src="assets/rcm-audit.js"></script>
+<script src="assets/arch-brand.js"></script>
+<script src="assets/arch-aco.js"></script>
 <style>
 #homeFab{position:fixed;bottom:16px;left:16px;z-index:2000;width:46px;height:46px;
   display:flex;align-items:center;justify-content:center;font-size:21px;text-decoration:none;

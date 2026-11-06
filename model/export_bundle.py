@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 export_bundle.py — تحويل نموذج LightGBM إلى حزمة JSON مضغوطة يقرأها المتصفح
-Namaa Predictor · Makkah Health Cluster · Revenue Development Performance
+ARCH Predict · ARCH Systems
 
 الحزمة تحتوي على:
   • الأشجار بصيغة مصفوفات مسطّحة (تنبؤ + TreeSHAP دقيق داخل المتصفح)
@@ -333,6 +333,10 @@ def _recovery_ratios(df):
     فئة «موافقة غير كاملة» تجمع المرفوضة والمقبولة جزئياً، فتُحسب نسبتها
     على الفئتين معاً بأوزانهما الفعلية في البيانات.
     """
+    if "Total Covg" not in df.columns:
+        # تصدير CareWare للموافقات لا يحمل المبلغ المغطى — تبقى النسب الافتراضية
+        # المعتمدة في score_batch إلى أن يتوفر عمود التغطية.
+        return {P.CLASSES[0]: 0.93, P.CLASSES[1]: 0.25, "_detail": {}, "_source": "default"}
     tot = pd.to_numeric(df["Total"], errors="coerce")
     cov = pd.to_numeric(df.get("Total Covg"), errors="coerce")
     st = df[P.COL_TARGET].astype(str).str.strip()
@@ -356,7 +360,7 @@ def _write_model_card(m, art_dir, bundle):
     lines = [
         "# بطاقة النموذج — التنبؤ بنتيجة الموافقة التأمينية",
         "",
-        "**منصّة مُتَنَبِّئ نماء · تجمع مكة المكرمة الصحي · إدارة أداء تنمية الإيرادات**",
+        "**ARCH Predict · ARCH Systems**",
         "",
         f"تاريخ التوليد: {m.get('generated_at')}",
         "",

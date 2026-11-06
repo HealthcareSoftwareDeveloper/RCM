@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 export_claims_bundle.py — تحويل نموذج المطالبات إلى حزمة JSON يقرأها المتصفح
-منصّة مُتَنَبِّئ نماء · تجمع مكة المكرمة الصحي · إدارة أداء تنمية الإيرادات
+ARCH Predict · ARCH Systems
 
 الحزمة (window.RCM_CLAIMS_BUNDLE) بنفس شكل حزمة الموافقات — نفس مفاتيح
 approval/reason — فيعمل عليها محرّك rcm-engine.js ومستعرض الأشجار كما هما.

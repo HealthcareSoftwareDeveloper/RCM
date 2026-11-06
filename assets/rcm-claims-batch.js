@@ -1,6 +1,6 @@
 /*!
- * rcm-claims-batch.js — تبويب «التنبؤ بالملفات» في مُتَنَبِّئ نماء للمطالبات
- * تجمع مكة المكرمة الصحي · إدارة أداء تنمية الإيرادات
+ * rcm-claims-batch.js — تبويب «التنبؤ بالملفات» في ARCH Predict للمطالبات
+ * ARCH Predict · ARCH Systems
  *
  * رفع Excel/CSV وتسجيل كل مطالبة بنفس نموذج الصفحة داخل المتصفح — بترميز
  * الصفحة نفسه (window.RCM_CLAIMS.encode) فتتطابق نتيجة الملف مع الإدخال
@@ -137,7 +137,7 @@
     XLSX.utils.book_append_sheet(wb, ws2, "القيم المسموحة");
 
     var inst = [
-      ["تعليمات تعبئة القالب — مُتَنَبِّئ نماء للمطالبات"],
+      ["تعليمات تعبئة القالب — ARCH Predict للمطالبات"],
       [""],
       ["1. عبّئ ورقة «المطالبات»: كل صف مطالبة واحدة. الصفوف الثلاثة الموجودة أمثلة — احذفها أو استبدلها."],
       ["2. المطابقة ذكية: يقبل الرفع أي ترتيب أعمدة وأي تسمية قريبة (عربية أو إنجليزية)، والحقل غير الموجود يأخذ افتراضات الصفحة — وستظهر لك خريطة الأعمدة بعد الرفع."],
@@ -411,6 +411,8 @@
     var out = [heads.concat(OUT_HEADS)];
     var counts = { over: 0, nfp: 0, riskSum: 0 };
     var auditRows = [], seen = {}, pivotRows = [];
+    // ARCH Predict — صفوف قائمة التدخل ومراقبة النموذج (assets/arch-aco.js)
+    var acoRows = [], outIdx = window.ARCHACO ? ARCHACO.outcomeIndex(heads) : -1;
     var pv = function (v) { v = String(v == null ? "" : v).trim(); return v || "غير محدد"; };
     var i = 0, CHUNK = 400;
 
@@ -431,6 +433,11 @@
                                  code: s.reasons[0] ? s.reasons[0].label : "—" },
                          amount: isFinite(amt) ? amt : 0, p: s.proba[NFP],
                          risk: s.risk === "" ? 0 : s.risk, hi: s.proba[NFP] >= THRESHOLD });
+        acoRows.push({ k: auditRows[auditRows.length - 1].k, p: s.proba[NFP], a: isFinite(amt) ? amt : 0,
+                        risk: s.risk === "" ? 0 : s.risk, r1: s.reasons[0] ? s.reasons[0].label : "",
+                        act1: s.reasons[0] ? s.reasons[0].action : "", elig: "", dims: { payer: pv(rec.insurance), hospital: pv(rec.hospital), unit: pv(rec.visit_type) },
+                        month: window.ARCHACO ? ARCHACO.month(rec.visit_date) : "",
+                        y: outIdx >= 0 && window.ARCHACO ? ARCHACO.outcome(body[i][outIdx]) : null });
         out.push(body[i].concat(outRow(s)));
       }
       if (i < body.length) {
@@ -439,7 +446,7 @@
         setTimeout(step, 0);
       } else {
         RESULT = { aoa: out, base: file.name.replace(/\.(xlsx|xls|csv)$/i, ""), isCsv: isCsv, counts: counts, n: body.length,
-                   audit: { stage: "claims", noun: "مطالبة", threshold: THRESHOLD, rows: auditRows },
+                   aco: acoRows, audit: { stage: "claims", noun: "مطالبة", threshold: THRESHOLD, rows: auditRows },
                    pivot: { rows: pivotRows, hiLabel: "عالية الخطورة", moneyLabel: "المبلغ المعرّض للخطر",
                             actions: ACTION_BY_LABEL,
                             dims: [ { key: "band", label: "نطاق الخطر" },
@@ -509,6 +516,7 @@
     };
 
     if (window.RCMAudit && RCMAudit.onBatch) RCMAudit.onBatch(RESULT.audit);
+    if (window.ARCHACO) ARCHACO.onBatch({ stage: RESULT.audit.stage, noun: RESULT.audit.noun, threshold: THRESHOLD, file: RESULT.base, rows: RESULT.aco });
   }
 
   function showErr(e) {

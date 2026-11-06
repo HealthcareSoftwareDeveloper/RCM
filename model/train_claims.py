@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 train_claims.py — تدريب نموذج التنبؤ بسداد المطالبات وأسباب رفضها
-منصّة مُتَنَبِّئ نماء · تجمع مكة المكرمة الصحي · إدارة أداء تنمية الإيرادات
+ARCH Predict · ARCH Systems
 
 الاستخدام:
   python3 model/train_claims.py --data path/to/RCM_Claims_Cleaned.xlsx

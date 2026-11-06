@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 train_model.py — تدريب واختيار أفضل نموذج للتنبؤ بنتيجة الموافقة التأمينية
-Namaa Predictor · Makkah Health Cluster · Revenue Development Performance
+ARCH Predict · ARCH Systems
 
 المخرجات (في model/artifacts/):
   model_bundle.json   حزمة النموذج المضغوطة (أشجار + قواميس + جداول اللقطة) للمتصفح
@@ -106,9 +106,12 @@ def log(msg):
 
 
 # ──────────────────────────────────────────────────────────────────────
-def prepare(path):
-    log(f"قراءة البيانات: {path}")
-    raw = P.load_raw(path)
+def prepare(path, approvals=None, eligibility=None):
+    log(f"قراءة البيانات: {approvals or path}" + (f" + الأهلية: {eligibility}" if eligibility else ""))
+    raw = P.load_any(path, approvals, eligibility)
+    if DROP_AMOUNT[0]:
+        log("تجاهل مبلغ الفاتورة (--drop-amount)")
+        raw["Total"] = np.nan
     log(f"إجمالي الصفوف: {len(raw):,}")
 
     df = raw[P.decided_mask(raw)].copy()
@@ -123,6 +126,7 @@ def prepare(path):
 
 
 VOCAB = {}
+DROP_AMOUNT = [False]
 
 
 def as_cat(d):
@@ -180,11 +184,15 @@ def bakeoff(X, y, cut):  # noqa: C901
     ev("Extra Trees",
        ExtraTreesClassifier(n_estimators=500, min_samples_leaf=3, n_jobs=-1,
                             random_state=42).fit(Xtrf, ytr).predict_proba(Xtef))
+    # عمود فارغ كلياً (مثل درجة الطوارئ حين لا يحملها مصدر البيانات) يُسقط من هذه
+    # الخوارزمية وحدها — sklearn يرفض تقسيم عمود بلا أي قيمة.
+    hcols = [c for c in X.columns if Xtr[c].notna().any()]
+    hcat = [c in P.CAT_FEATURES for c in hcols]
     ev("HistGradientBoosting",
        HistGradientBoostingClassifier(max_iter=500, learning_rate=0.05, max_leaf_nodes=31,
                                       l2_regularization=2.0, min_samples_leaf=40,
-                                      categorical_features=cat_idx, random_state=42,
-                                      early_stopping=False).fit(Xtr, ytr).predict_proba(Xte))
+                                      categorical_features=hcat, random_state=42,
+                                      early_stopping=False).fit(Xtr[hcols], ytr).predict_proba(Xte[hcols]))
     ev("XGBoost",
        xgb.XGBClassifier(n_estimators=800, learning_rate=0.04, max_depth=6, subsample=0.85,
                          colsample_bytree=0.8, reg_lambda=3.0, min_child_weight=10,
@@ -253,11 +261,21 @@ def train_reason_model(raw, vocab, snap):
 # ──────────────────────────────────────────────────────────────────────
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--data", required=True, help="مسار ملف البيانات (xlsx/csv)")
+    ap.add_argument("--data", help="ملف البيانات بالمخطط القانوني (xlsx/csv)")
+    ap.add_argument("--approvals", help="تصدير الموافقات من CareWare (سطر لكل خدمة) — بديل --data")
+    ap.add_argument("--eligibility", help="تصدير الأهلية من CareWare (يُربط بـ Encounter Number)")
+    ap.add_argument("--out-dir", help="مجلد مخرجات بديل (للتجربة دون استبدال النموذج المنشور)")
     ap.add_argument("--skip-bakeoff", action="store_true")
+    ap.add_argument("--drop-amount", action="store_true",
+                    help="تجاهل مبلغ الفاتورة (حين يُملأ بعد القرار في المصدر — خطر تسريب)")
     args = ap.parse_args()
+    if args.out_dir:
+        global ART
+        ART = os.path.abspath(args.out_dir)
+        os.makedirs(ART, exist_ok=True)
 
-    raw, df, X, y, vocab = prepare(args.data)
+    DROP_AMOUNT[0] = bool(args.drop_amount)
+    raw, df, X, y, vocab = prepare(args.data, args.approvals, args.eligibility)
     VOCAB.update(vocab)
     cut = int(len(df) * 0.80)
     split_date = str(df["_vd"].iloc[cut])[:10]

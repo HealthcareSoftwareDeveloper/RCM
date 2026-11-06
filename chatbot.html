@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>مساند نماء الذكي — المساعد المرجعي للوائح مجلس الضمان الصحي · مُتَنَبِّئ نماء</title>
+<title>مساند نماء الذكي — المساعد المرجعي للوائح مجلس الضمان الصحي · ARCH Predict</title>
 <meta name="description" content="مساند نماء الذكي — مساعد مرجعي يقرأ لوائح وأنظمة وسياسات مجلس الضمان الصحي CHI، يصوغ الحكم بلغة تشغيلية ويستنتج منه، ويُسنِد كل جملة إلى نصّها مع رقم الصفحة وصورتها">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <style>
@@ -116,7 +116,7 @@ a{color:var(--accent)}
 .qcase{display:inline-block;font-size:10px;font-weight:700;background:rgba(255,255,255,.25);
   border-radius:6px;padding:1px 7px;margin-inline-start:7px}
 
-/* ── بطاقة الحالة من منصّة مُتَنَبِّئ نماء ── */
+/* ── بطاقة الحالة من منصّة ARCH Predict ── */
 .casecard{background:var(--card);border:1px solid var(--border);border-inline-start:3px solid var(--accent);
   border-radius:12px;padding:14px 15px;margin-bottom:12px}
 .chead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
@@ -299,13 +299,13 @@ a{color:var(--accent)}
 <div class="wrap">
 
 <div class="head">
-  <img class="org-logo" src="assets/logo.png" alt="شعار تجمع مكة المكرمة الصحي">
-  <div class="badge">إدارة أداء تنمية الإيرادات</div>
+  <img class="org-logo" data-arch-org-logo alt="" hidden>
+  <div class="badge"><span data-arch-org-unit>ARCH Systems</span></div>
   <div class="brand">
     <img class="brand-mark" src="assets/sanad-logo.svg" alt="">
     <div class="brand-text"><h1 class="ar">مساند نماء الذكي</h1><span class="en">MUSANED NAMAA</span></div>
   </div>
-  <p class="tagline">المساعد الذكي في منصّة <b>مُتَنَبِّئ نماء</b> — يقرأ لوائح مجلس الضمان الصحي،
+  <p class="tagline">المساعد الذكي في منصّة <b>ARCH Predict</b> — يقرأ لوائح مجلس الضمان الصحي،
     ويصوغ الحكم، ويستنتج منه، ويُسنِد كل جملة إلى نصّها</p>
   <div class="navlinks">
     <a href="predict.html">🔮 منصة التنبؤ</a>
@@ -402,7 +402,7 @@ a{color:var(--accent)}
       وملخّص الحالة إن أرفقتها — تُرسَل إلى مزوّد النموذج الذي اخترته
       (Anthropic أو Google) لمعالجتها وفق شروطه.
       <b>لا ترفق حالة تحمل بيانات تُعرِّف مريضاً بعينه.</b>
-      المفتاح يُحفَظ في متصفّحك وحده (<code>localStorage</code>) ولا يُرسَل إلى موقع مُتَنَبِّئ نماء،
+      المفتاح يُحفَظ في متصفّحك وحده (<code>localStorage</code>) ولا يُرسَل إلى موقع ARCH Predict،
       لكنّ أي شخص يستعمل هذا الجهاز والمتصفّح يمكنه استخراجه —
       <b>للتعميم على فريق، استعمل «بوّابة المنشأة» فلا يوجد مفتاح في المتصفّح أصلاً.</b>
     </div>
@@ -435,7 +435,7 @@ a{color:var(--accent)}
 </div>
 
 <div class="foot">
-  <div><b>مساند نماء الذكي</b> — المساعد الذكي في منصّة <b>مُتَنَبِّئ نماء</b> · تجمع مكة المكرمة الصحي — إدارة أداء تنمية الإيرادات</div>
+  <div><b>مساند نماء الذكي</b> — المساعد الذكي في منصّة <b>ARCH Predict</b> · <span data-arch-org-line>ARCH Systems</span></div>
   <div style="margin-top:5px">Built and developed by: <b>Hani Alsulami</b></div>
 </div>
 
@@ -448,6 +448,7 @@ a{color:var(--accent)}
 <script src="assets/rcm-reason.js"></script>
 <script src="assets/rcm-case.js"></script>
 <script src="assets/site-config.js"></script>
+<script src="assets/arch-brand.js"></script>
 <script src="assets/rcm-llm.js"></script>
 <script src="assets/rcm-chat-ui.js"></script>
 <style>

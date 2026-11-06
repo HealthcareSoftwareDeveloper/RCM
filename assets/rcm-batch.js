@@ -1,6 +1,6 @@
 /*!
  * rcm-batch.js — تبويب «التنبؤ بالملفات»: رفع Excel/CSV وتسجيله دفعياً داخل المتصفح
- * منصّة مُتَنَبِّئ نماء · تجمع مكة المكرمة الصحي · إدارة أداء تنمية الإيرادات
+ * ARCH Predict · ARCH Systems
  *
  * يقرأ الملف ويُسجِّله بنفس محرّك التنبؤ (RCMEngine) دون إرسال أي بيانات لأي خادم،
  * ويُصدِّر النتائج ملف Excel أو CSV، مع قالب Excel جاهز للتعبئة.
@@ -124,7 +124,7 @@
 
     // ورقة التعليمات
     var inst = [
-      ["تعليمات تعبئة القالب — منصّة مُتَنَبِّئ نماء"],
+      ["تعليمات تعبئة القالب — منصّة ARCH Predict"],
       [""],
       ["1. عبّئ ورقة «الطلبات»: كل صف طلب موافقة واحد. الصفوف الثلاثة الموجودة أمثلة — احذفها أو استبدلها."],
       ["2. المطابقة ذكية: يقبل الرفع أي ترتيب أعمدة وأي تسمية قريبة (عربية أو إنجليزية)، والحقل غير الموجود يأخذ افتراضات الصفحة — وستظهر لك خريطة الأعمدة بعد الرفع."],
@@ -323,8 +323,53 @@
     return n > 1 ? base + "#" + n : base;
   }
 
+  // ── ARCH Predict: تصديرا CareWare (الموافقات + الأهلية) يُقبلان كما هما ──
+  // يمكن رفع الملفين معاً، أو ملف الأهلية أولاً ثم ملف الموافقات.
+  var ELIG = null, SRC_NOTE = "";
+  function readAoa(XLSX, file) {
+    return new Promise(function (res, rej) {
+      var fr = new FileReader();
+      fr.onerror = function () { rej(new Error("تعذّرت قراءة الملف " + file.name)); };
+      fr.onload = function () {
+        try {
+          var wb = XLSX.read(fr.result, { type: "array", cellDates: true, codepage: 65001 });
+          res(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, raw: true, defval: "" }));
+        } catch (e) { rej(e); }
+      };
+      fr.readAsArrayBuffer(file);
+    });
+  }
+  function processFiles(files) {
+    files = Array.prototype.slice.call(files || []);
+    if (!files.length) return;
+    var S = window.ARCHSources;
+    if (files.length === 1 && !S) return processFile(files[0]);
+    $("batchStatus").innerHTML = '<div class="loading" style="padding:16px"><div class="spin"></div>جارٍ قراءة الملفات…</div>';
+    loadXLSX().then(function (XLSX) {
+      return Promise.all(files.map(function (f) { return readAoa(XLSX, f); })).then(function (aoas) {
+        var appr = null, apprName = "", plain = null;
+        aoas.forEach(function (aoa, i) {
+          var k = S ? S.kind(aoa[0] || []) : null;
+          if (k === "eligibility") ELIG = { aoa: aoa, name: files[i].name };
+          else if (k === "approvals") { appr = aoa; apprName = files[i].name; }
+          else plain = plain || files[i];
+        });
+        if (appr) {
+          var b = S.build(appr, ELIG ? ELIG.aoa : null, COLS);
+          SRC_NOTE = S.reportHtml(b.report, ELIG && ELIG.name);
+          return handleAoa(XLSX, { name: apprName }, false, b.aoa);
+        }
+        if (plain) { SRC_NOTE = ""; return processFile(plain); }
+        if (ELIG) $("batchStatus").innerHTML = '<div class="note info" style="margin-top:10px"><b>حُمّل ملف الأهلية «' +
+          ELIG.name + "» (" + (ELIG.aoa.length - 1).toLocaleString("en") + " فحص).</b> ارفع الآن ملف الموافقات من CareWare " +
+          "وسيُربط به تلقائياً بـ Encounter Number.</div>";
+      });
+    }).catch(showErr);
+  }
+
   function processFile(file) {
     var isCsv = /\.csv$/i.test(file.name);
+    SRC_NOTE = "";
     $("batchStatus").innerHTML = '<div class="loading" style="padding:16px"><div class="spin"></div>جارٍ قراءة الملف…</div>';
     loadXLSX().then(function (XLSX) {
       var fr = new FileReader();
@@ -335,6 +380,17 @@
           var ws = wb.Sheets[wb.SheetNames[0]];
           var aoa = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: "" });
           if (!aoa.length) throw new Error("الملف فارغ");
+          var S = window.ARCHSources, k = S ? S.kind(aoa[0] || []) : null;
+          if (k) { processFiles([file]); return; }
+          handleAoa(XLSX, file, isCsv, aoa);
+        } catch (e) { showErr(e); }
+      };
+      fr.readAsArrayBuffer(file);
+    }).catch(showErr);
+  }
+
+  function handleAoa(XLSX, file, isCsv, aoa) {
+        try {
 
           // صف العناوين → فهرس كل مفتاح
           var heads = aoa[0];
@@ -348,19 +404,19 @@
             return r.some(function (v) { return v !== "" && v != null; });
           });
           if (!body.length) throw new Error("لا توجد صفوف بيانات بعد صف العناوين");
-          if (body.length > 50000) throw new Error("الحد الأقصى 50,000 صف في الملف الواحد");
+          if (body.length > 50000) throw new Error("الحد الأقصى 50,000 صف (طلب) في الملف الواحد");
 
           scoreAll(XLSX, file, isCsv, heads, idx, body, idColIndex(heads));
         } catch (e) { showErr(e); }
-      };
-      fr.readAsArrayBuffer(file);
-    }).catch(showErr);
   }
 
   function scoreAll(XLSX, file, isCsv, heads, idx, body, idIdx) {
     var out = [heads.concat(OUT_HEADS)];
     var counts = { hi: 0, md: 0, lo: 0, nfa: 0, riskSum: 0 };
     var auditRows = [], seen = {}, pivotRows = [];
+    // ARCH Predict — صفوف قائمة التدخل ومراقبة النموذج (assets/arch-aco.js)
+    var acoRows = [], outIdx = window.ARCHACO ? ARCHACO.outcomeIndex(heads) : -1;
+    var insIdx = heads.indexOf("شركة التأمين — المصدر");   // تصدير CareWare: اسم الدافع كما في المصدر
     var pv = function (v) { v = String(v == null ? "" : v).trim(); return v || "غير محدد"; };
     var i = 0, CHUNK = 400;
 
@@ -383,6 +439,11 @@
                                  code: s.reasons[0] ? s.reasons[0].label : "—" },
                          amount: isFinite(amt) ? amt : 0, p: s.proba[NFA],
                          risk: s.risk === "" ? 0 : s.risk, hi: s.proba[NFA] >= 0.65 });
+        acoRows.push({ k: auditRows[auditRows.length - 1].k, p: s.proba[NFA], a: isFinite(amt) ? amt : 0,
+                        risk: s.risk === "" ? 0 : s.risk, r1: s.reasons[0] ? s.reasons[0].label : "",
+                        act1: s.reasons[0] ? s.reasons[0].action : "", elig: rec.nphies ? String(rec.nphies) : "", dims: { payer: pv(insIdx >= 0 ? body[i][insIdx] : rec.contract), hospital: pv(rec.hospital), unit: pv(rec.clinic) },
+                        month: window.ARCHACO ? ARCHACO.month(rec.visit_date) : "",
+                        y: outIdx >= 0 && window.ARCHACO ? ARCHACO.outcome(body[i][outIdx]) : null });
         out.push(body[i].concat(outRow(s)));
       }
       if (i < body.length) {
@@ -391,7 +452,7 @@
         setTimeout(step, 0);
       } else {
         RESULT = { aoa: out, base: file.name.replace(/\.(xlsx|xls|csv)$/i, ""), isCsv: isCsv, counts: counts, n: body.length,
-                   audit: { stage: "approvals", noun: "طلب", threshold: THRESHOLD, rows: auditRows },
+                   aco: acoRows, audit: { stage: "approvals", noun: "طلب", threshold: THRESHOLD, rows: auditRows },
                    pivot: { rows: pivotRows, hiLabel: "عالية الخطورة", moneyLabel: "المبلغ المعرّض للخطر",
                             actions: ACTION_BY_LABEL,
                             dims: [ { key: "band", label: "نطاق الخطر" },
@@ -435,7 +496,8 @@
     }
     h += "</table></div>";
     if (aoa.length > 11) h += '<p style="font-size:11.5px;color:var(--muted2)">المعاينة لأول 10 صفوف — الملف الكامل في التنزيل.</p>';
-    if (MAP_REPORT) h += window.RCMBatchTools.mapReportHtml(MAP_REPORT);
+    if (SRC_NOTE) h += SRC_NOTE;
+    else if (MAP_REPORT) h += window.RCMBatchTools.mapReportHtml(MAP_REPORT);
     h += '<div id="batchPivot"></div>';
     $("batchStatus").innerHTML = h;
     if (RESULT.pivot) window.RCMBatchTools.pivotUI("batchPivot", RESULT.pivot);
@@ -465,6 +527,7 @@
     };
 
     if (window.RCMAudit && RCMAudit.onBatch) RCMAudit.onBatch(RESULT.audit);
+    if (window.ARCHACO) ARCHACO.onBatch({ stage: RESULT.audit.stage, noun: RESULT.audit.noun, threshold: THRESHOLD, file: RESULT.base, rows: RESULT.aco });
   }
 
   function showErr(e) {
@@ -495,8 +558,11 @@
     h += '<div id="dropZone" style="margin-top:12px;border:2px dashed var(--border);border-radius:12px;' +
       'padding:34px 16px;text-align:center;color:var(--muted2);font-size:13.5px;cursor:pointer">' +
       '<div style="font-size:30px;margin-bottom:6px">⬆️</div>' +
-      "اسحب ملف <b>Excel (.xlsx)</b> أو <b>CSV</b> هنا، أو اضغط للاختيار" +
-      '<input type="file" id="batchFile" accept=".xlsx,.xls,.csv" style="display:none"></div>';
+      "اسحب ملف <b>Excel (.xlsx)</b> أو <b>CSV</b> هنا (أو تصديرَي CareWare معاً)، أو اضغط للاختيار" +
+      '<input type="file" id="batchFile" accept=".xlsx,.xls,.csv" multiple style="display:none"></div>' +
+      '<p style="font-size:11.5px;color:var(--muted2);margin:6px 0 0"><b>تصديرا CareWare مقبولان كما هما:</b> ارفع ملف الموافقات ' +
+      "(سطر لكل خدمة) وحده أو مع ملف الأهلية معاً — تُجمَّع الخدمات في طلب واحد (المستشفى + رقم الطلب)، ويُربط فحص الأهلية " +
+      "بـ Encounter Number، وتُحذف أعمدة الهوية عند القراءة. الطلبات ذات القرار تغذّي «مراقبة النموذج» تلقائياً.</p>";
     h += '<div id="batchStatus"></div>';
     h += "</div>";
     host.innerHTML = h;
@@ -506,13 +572,12 @@
     $("genCsv").onclick = function () { downloadDemo(true); };
     var dz = $("dropZone"), fi = $("batchFile");
     dz.onclick = function () { fi.click(); };
-    fi.onchange = function () { if (fi.files[0]) { processFile(fi.files[0]); fi.value = ""; } };
+    fi.onchange = function () { if (fi.files.length) { processFiles(fi.files); fi.value = ""; } };
     dz.ondragover = function (e) { e.preventDefault(); dz.style.borderColor = "var(--accent)"; };
     dz.ondragleave = function () { dz.style.borderColor = "var(--border)"; };
     dz.ondrop = function (e) {
       e.preventDefault(); dz.style.borderColor = "var(--border)";
-      var f = e.dataTransfer.files && e.dataTransfer.files[0];
-      if (f) processFile(f);
+      if (e.dataTransfer.files && e.dataTransfer.files.length) processFiles(e.dataTransfer.files);
     };
   }
 

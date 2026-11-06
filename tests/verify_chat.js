@@ -191,7 +191,7 @@ if (!fs.existsSync(corpusPath)) {
 }
 
 // ── (٤) جسر الحالة وطبقة التوليد ──────────────────────────────────────
-console.log("\n٤. جسر الحالة من منصّة مُتَنَبِّئ نماء");
+console.log("\n٤. جسر الحالة من منصّة ARCH Predict");
 const CASE = require(path.join(__dirname, "..", "assets", "rcm-case.js"));
 
 {

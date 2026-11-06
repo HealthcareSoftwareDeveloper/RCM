@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-build_corpus.py — بناء فهرس مراجع مجلس الضمان الصحي (CHI) لمساعد «مُتَنَبِّئ نماء»
-Namaa Predictor · Makkah Health Cluster · Revenue Development Performance
+build_corpus.py — بناء فهرس مراجع مجلس الضمان الصحي (CHI) لمساعد «ARCH Predict»
+ARCH Predict · ARCH Systems
 
 يقرأ ملفات PDF (لوائح وأنظمة وسياسات CHI) ويُخرج:
   chatbot/data/corpus.js   نصوص المقاطع + فهرس بحث معكوس (BM25)

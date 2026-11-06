@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>دليل استخدام منصة مُتَنَبِّئ نماء — تجمع مكة المكرمة الصحي</title>
-<meta name="description" content="دليل عملي لاستخدام منصة مُتَنَبِّئ نماء: شرح الحقول، قراءة النتيجة، أسباب عدم الموافقة، تفسير SHAP، والدمج في Power BI">
+<title>دليل استخدام ARCH Predict</title>
+<meta name="description" content="دليل عملي لاستخدام منصة ARCH Predict: شرح الحقول، قراءة النتيجة، أسباب عدم الموافقة، تفسير SHAP، والدمج في Power BI">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <style>
 :root{
-  /* لوحة مشتقّة من ألوان شعار تجمع مكة المكرمة الصحي (أزرق فولاذي ‎#4080B0‎).
+  /* لوحة ARCH Predict (أزرق فولاذي ‎#4080B0‎).
      كل لون نصّي هنا يتجاوز عتبة WCAG AA (‎4.5:1‎) على الخلفية والبطاقة معاً. */
   --bg:#eff4f9; --surface:#f6f9fc; --card:#ffffff; --card2:#f6f9fc;
   --border:#d6e2ed; --border-strong:#c3d4e2;
@@ -34,7 +34,7 @@ body{font-family:"IBM Plex Sans Arabic","Segoe UI",Tahoma,"Noto Sans Arabic",Ari
 .badge{display:inline-flex;gap:6px;background:var(--accent-dim);border:1px solid rgba(27,111,168,.22);
   color:var(--accent);font-size:11px;font-weight:600;padding:4px 14px;border-radius:20px;margin-bottom:12px}
 .head h1{font-size:26px;color:var(--text);margin-bottom:6px;line-height:1.5}
-/* ── هوية «مُتَنَبِّئ نماء» ── */
+/* ── هوية «ARCH Predict» ── */
 .brand{display:flex;align-items:center;justify-content:center;gap:13px;margin-bottom:7px}
 .brand-mark{width:54px;height:54px;flex-shrink:0}
 .brand-text{text-align:right;line-height:1}
@@ -176,11 +176,11 @@ details p:last-child{margin-bottom:0}
 <div class="shell">
 
 <div class="head">
-  <img class="org-logo" src="assets/logo.png" alt="شعار تجمع مكة المكرمة الصحي">
-  <div class="badge">إدارة أداء تنمية الإيرادات</div>
+  <img class="org-logo" data-arch-org-logo alt="" hidden>
+  <div class="badge"><span data-arch-org-unit>ARCH Systems</span></div>
   <div class="brand">
-    <img class="brand-mark" src="assets/sadeed-logo.svg" alt="">
-    <div class="brand-text"><h1 class="ar">مُتَنَبِّئ نماء</h1><span class="en">NAMAA PREDICTOR</span></div>
+    <img class="brand-mark" src="assets/arch-mark.svg" alt="">
+    <div class="brand-text"><h1 class="ar">ARCH Predict</h1><span class="en">ARCH SYSTEMS</span></div>
   </div>
   <p class="tagline">دليل استخدام المنصة — الموافقات المسبقة والمطالبات</p>
   <p>كل ما تحتاجه لتشغيل المنصة وقراءة نتائجها والتصرّف بناءً عليها</p>
@@ -194,7 +194,7 @@ details p:last-child{margin-bottom:0}
 
 <nav>
   <h2>محتويات الدليل</h2>
-  <a href="#s1"><span class="n">١</span>ما هي «مُتَنَبِّئ نماء»؟</a>
+  <a href="#s1"><span class="n">١</span>ما هي «ARCH Predict»؟</a>
   <a href="#s2"><span class="n">٢</span>البدء في دقيقة</a>
   <a href="#s3"><span class="n">٣</span>شرح الحقول</a>
   <a href="#s4"><span class="n">٤</span>قراءة النتيجة</a>
@@ -202,7 +202,7 @@ details p:last-child{margin-bottom:0}
   <a href="#s6"><span class="n">٦</span>تفسير SHAP</a>
   <a href="#s7"><span class="n">٧</span>أمثلة عملية</a>
   <a href="#s8"><span class="n">٨</span>الدمج في Power BI</a>
-  <a href="#s9c"><span class="n">٩</span>مُتَنَبِّئ نماء للمطالبات</a>
+  <a href="#s9c"><span class="n">٩</span>ARCH Predict للمطالبات</a>
   <a href="#s9"><span class="n">١٠</span>مساند نماء الذكي وتحسين الطلب</a>
   <a href="#sdash"><span class="n">١١</span>🛡 لوحة القيادة</a>
   <a href="#s10"><span class="n">١٢</span>حدود الاستخدام</a>
@@ -214,9 +214,9 @@ details p:last-child{margin-bottom:0}
 
 <!-- ═════════ ١ ═════════ -->
 <section id="s1">
-  <h2><span class="num">١</span>ما هي «مُتَنَبِّئ نماء»؟</h2>
+  <h2><span class="num">١</span>ما هي «ARCH Predict»؟</h2>
   <div class="lede">
-    <b>مُتَنَبِّئ نماء</b> منصّة تغطي مرحلتين: قبل إرسال طلب <b>الموافقة المسبقة</b>
+    <b>ARCH Predict</b> منصّة تغطي مرحلتين: قبل إرسال طلب <b>الموافقة المسبقة</b>
     (Pre-Authorization) تجيب: <b>هل ستصدر الموافقة كاملةً؟</b> — وبعد تقديم الخدمة، في
     <a href="claims.html">صفحة <b>المطالبات</b></a>: <b>هل ستُسدَّد المطالبة كاملةً؟</b>
     (القسم <a href="#s9c">٩</a> من هذا الدليل). الأقسام ١–٨ تشرح صفحة الموافقات،
@@ -651,16 +651,16 @@ details p:last-child{margin-bottom:0}
 
 <!-- ═════════ ٩ ═════════ -->
 <section id="s9c">
-  <h2><span class="num">٩</span>مُتَنَبِّئ نماء للمطالبات — المرحلة الثانية</h2>
+  <h2><span class="num">٩</span>ARCH Predict للمطالبات — المرحلة الثانية</h2>
   <div class="lede">
     كل ما سبق يخصّ <b>الموافقات المسبقة</b> قبل تقديم الخدمة. صفحة
-    <a href="claims.html"><b>مُتَنَبِّئ نماء للمطالبات</b></a> تنقل التجربة نفسها إلى المرحلة
+    <a href="claims.html"><b>ARCH Predict للمطالبات</b></a> تنقل التجربة نفسها إلى المرحلة
     اللاحقة: هل ستُسدَّد <b>المطالبة</b> كاملةً بعد تقديم الخدمة؟ وما رمز رفض
     <b>NPHIES</b> المرجَّح إن لم تُسدَّد؟
   </div>
 
   <div class="cta" style="margin:14px 0">
-    <a class="btn" href="claims.html">📄 افتح مُتَنَبِّئ نماء للمطالبات</a>
+    <a class="btn" href="claims.html">📄 افتح ARCH Predict للمطالبات</a>
   </div>
 
   <h3>حقولها — ما يختلف عن صفحة الموافقات</h3>
@@ -812,7 +812,7 @@ details p:last-child{margin-bottom:0}
     <b>قرأ حالتك</b>: احتمال عدم اكتمال الموافقة، وأرجح الأسباب، وأكثر العوامل تأثيراً.</p>
 
   <figure>
-    <img src="docs/img/case-card.png" alt="بطاقة الحالة القادمة من منصّة مُتَنَبِّئ نماء داخل المساعد">
+    <img src="docs/img/case-card.png" alt="بطاقة الحالة القادمة من منصّة ARCH Predict داخل المساعد">
     <figcaption>الحالة كما يقرأها «مساند نماء الذكي»: احتمال عدم اكتمال الموافقة، وأرجح الأسباب
       مع إجراء تصحيحي لكلٍّ منها، وزرّ يبدأ خطة التحسين.</figcaption>
   </figure>
@@ -915,7 +915,7 @@ details p:last-child{margin-bottom:0}
 
 <!-- ═════════ ١٢ ═════════ -->
 <section id="s10">
-  <h2><span class="num">١٢</span>حدود الاستخدام — ما لا تفعله «مُتَنَبِّئ نماء»</h2>
+  <h2><span class="num">١٢</span>حدود الاستخدام — ما لا تفعله «ARCH Predict»</h2>
   <div class="lede">اقرأ هذا القسم قبل بناء أي إجراء تشغيلي على مخرجات المنصّة.</div>
 
   <figure>
@@ -1029,8 +1029,8 @@ details p:last-child{margin-bottom:0}
   </table></div>
 
   <div class="note info">
-    <b>للدعم الفني وطلبات إعادة التدريب:</b> إدارة أداء تنمية الإيرادات —
-    تجمع مكة المكرمة الصحي.
+    <b>للدعم الفني وطلبات إعادة التدريب:</b> محلل بيانات دورة الإيراد لدى الجهة المستضيفة،
+    أو ARCH Systems.
   </div>
 </section>
 
@@ -1038,8 +1038,7 @@ details p:last-child{margin-bottom:0}
 
 <div class="foot">
   <div class="dev">👨‍💻 <span>Built and developed by: <strong>Hani Alsulami</strong></span></div>
-  <div class="sub">تجمع مكة المكرمة الصحي · إدارة أداء تنمية الإيرادات</div>
-  <div class="sub" style="opacity:.65;margin-top:2px">Makkah Health Cluster · Revenue Development Performance</div>
+  <div class="sub" data-arch-org-line>ARCH Systems</div>
 </div>
 
 </div>
@@ -1053,5 +1052,7 @@ body.embed #homeFab{display:none}
 @media print{#homeFab{display:none}}
 </style>
 <a href="index.html" id="homeFab" title="الصفحة الرئيسية" aria-label="العودة إلى الصفحة الرئيسية">🏠</a>
+<script src="assets/site-config.js"></script>
+<script src="assets/arch-brand.js"></script>
 </body>
 </html>

@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<title>مُتَنَبِّئ نماء — رؤية استباقية للمطالبات والموافقات</title>
+<title>ARCH Predict — رؤية استباقية للمطالبات والموافقات</title>
 <style>
 :root{
-  /* لوحة مشتقّة من ألوان شعار تجمع مكة المكرمة الصحي (أزرق فولاذي ‎#4080B0‎).
+  /* لوحة ARCH Predict (أزرق فولاذي ‎#4080B0‎).
      كل لون نصّي هنا يتجاوز عتبة WCAG AA (‎4.5:1‎) على الخلفية والبطاقة معاً. */
   --bg:#eff4f9; --surface:#f6f9fc; --card:#ffffff; --card2:#f6f9fc;
   --border:#d6e2ed; --border-strong:#c3d4e2;
@@ -47,16 +47,16 @@ a.card.alt .tags span{background:rgba(90,112,133,.10);border-color:var(--border)
 </head>
 <body>
 <div class="wrap">
-  <img class="org-logo" src="assets/logo.png" alt="شعار تجمع مكة المكرمة الصحي">
-  <div class="badge">إدارة أداء تنمية الإيرادات</div>
+  <img class="org-logo" data-arch-org-logo alt="" hidden>
+  <div class="badge"><span data-arch-org-unit>ARCH Systems</span></div>
   <div class="brand">
-    <img class="brand-mark" src="assets/sadeed-logo.svg" alt="">
-    <div class="brand-text"><h1 class="ar">مُتَنَبِّئ نماء</h1><span class="en">NAMAA PREDICTOR</span></div>
+    <img class="brand-mark" src="assets/arch-mark.svg" alt="">
+    <div class="brand-text"><h1 class="ar">ARCH Predict</h1><span class="en">ARCH SYSTEMS</span></div>
   </div>
   <p class="sub"><b>رؤية استباقية للمطالبات والموافقات.. نستبق القرار لنقود النمو.</b><br>منصة تعلّم آلة للتنبؤ بالموافقات والمطالبات التأمينية وتقليل الرفض</p>
 
   <a class="card" href="predict.html">
-    <h2>🔮 مُتَنَبِّئ نماء للموافقات — التنبؤ بالموافقة</h2>
+    <h2>🔮 ARCH Predict للموافقات — التنبؤ بالموافقة</h2>
     <p>هل ستصدر الموافقة على هذا الطلب كاملةً؟ يقدّر الخطر قبل الإرسال، ويُرتّب الأسباب
        المرجّحة مع إجراء تصحيحي لكل سبب، ويشرح كل تنبّؤ بقيم SHAP. جاهز للدمج في Power BI.</p>
     <div class="tags">
@@ -66,7 +66,7 @@ a.card.alt .tags span{background:rgba(90,112,133,.10);border-color:var(--border)
   </a>
 
   <a class="card" href="claims.html">
-    <h2>📄 مُتَنَبِّئ نماء للمطالبات — التنبؤ بالسداد والمرفوضات</h2>
+    <h2>📄 ARCH Predict للمطالبات — التنبؤ بالسداد والمرفوضات</h2>
     <p>المرحلة اللاحقة لتقديم الخدمة: هل ستُسدَّد المطالبة كاملةً؟ يقدّر الخطر قبل التقديم،
        ويُرتّب رموز رفض NPHIES المرجَّحة مع إجراء تصحيحي لكل رمز، ويشرح كل تنبّؤ بقيم SHAP.</p>
     <div class="tags">
@@ -80,7 +80,7 @@ a.card.alt .tags span{background:rgba(90,112,133,.10);border-color:var(--border)
     <p>اسأل عن أي مادة أو إجراء في لوائح وأنظمة CHI، فيقرأ <b>مساند نماء الذكي</b> النصوص المنطبقة،
        ويعيد صياغتها بلغة تشغيلية، ويستخرج المدد والنسب، ويستنتج ما يترتّب عليها —
        ثم يعرض النصّ الرسمي حرفياً مع اسم المستند ورقم الصفحة وصورتها. ويقرأ نتيجة
-       تنبّؤك من مُتَنَبِّئ نماء فيحوّل كل سبب متوقَّع إلى بند عمل قبل الإرسال.</p>
+       تنبّؤك من ARCH Predict فيحوّل كل سبب متوقَّع إلى بند عمل قبل الإرسال.</p>
     <div class="tags"><span>صياغة واستنتاج</span><span>مرجع مع كل جملة</span><span>صورة المصدر</span>
       <span>خطة تحسين الطلب</span><span>حوار اختياري</span><span>٢٩ مستنداً · ٢٦٨ صفحة</span></div>
   </a>
@@ -95,5 +95,7 @@ a.card.alt .tags span{background:rgba(90,112,133,.10);border-color:var(--border)
 
   <div class="foot">Built and developed by: <b>Hani Alsulami</b></div>
 </div>
+<script src="assets/site-config.js"></script>
+<script src="assets/arch-brand.js"></script>
 </body>
 </html>

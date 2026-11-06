@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 powerbi_script.py — تشغيل النموذج داخل Power BI مباشرةً
-Namaa Predictor · Makkah Health Cluster · Revenue Development Performance
+ARCH Predict · ARCH Systems
 
 الاستخدام في Power BI Desktop:
     Home ← Get Data ← More… ← Other ← Python script

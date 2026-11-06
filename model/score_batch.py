@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 score_batch.py — تسجيل دفعي لملف طلبات موافقة كامل
-Namaa Predictor · Makkah Health Cluster · Revenue Development Performance
+ARCH Predict · ARCH Systems
 
 يقرأ ملف طلبات موافقة (xlsx/csv) ويُخرج ملفاً مسجَّلاً جاهزاً للاستيراد في Power BI،
 يحتوي لكل طلب على: التنبؤ، احتمالات الفئات، شريحة الخطر، الإيراد
@@ -141,7 +141,9 @@ def score(df, model, reason_model, reason_labels, vocab, snap,
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--data", required=True, help="ملف طلبات الموافقة المراد تسجيله")
+    ap.add_argument("--data", help="ملف طلبات الموافقة المراد تسجيله (المخطط القانوني)")
+    ap.add_argument("--approvals", help="تصدير الموافقات من CareWare — بديل --data")
+    ap.add_argument("--eligibility", help="تصدير الأهلية من CareWare (اختياري)")
     ap.add_argument("--out", default="scored_claims.csv", help="ملف الإخراج (csv أو xlsx)")
     ap.add_argument("--shap", type=int, default=3, help="عدد عوامل SHAP المُخرجة (0 لتعطيلها)")
     ap.add_argument("--reasons", type=int, default=3, help="عدد أسباب الرفض المُخرجة")
@@ -151,16 +153,17 @@ def main():
     model, rmodel, rlabels, vocab, snap = load_artifacts()
     threshold, recovery = load_bundle_meta()
 
-    df = P.load_raw(args.data)
-    print(f"قراءة {len(df):,} طلب موافقة من {args.data}")
+    df = P.load_any(args.data, args.approvals, args.eligibility)
+    print(f"قراءة {len(df):,} طلب موافقة من {args.data or args.approvals}")
 
     scored = score(df, model, rmodel, rlabels, vocab, snap,
                    args.shap, args.reasons, recovery, threshold)
 
     keep = [c.strip() for c in args.keep.split(",") if c.strip()]
-    base_cols = [c for c in ["Mrn", "Episode No", "Visit Date", "Hospital Name",
+    lead = ["request_key", "Request No", "Insurance", "Approval Reject Reason"] if args.approvals else ["Mrn", "Episode No"]
+    base_cols = [c for c in lead + [ "Visit Date", "Hospital Name",
                              "Clinic Name", "Contract Name", "Visit Type", "Total",
-                             P.COL_TARGET] if c in df.columns]
+                             P.COL_TARGET] if c in df.columns]   # بصمة المريض (Mrn) لا تُكتب أبداً في وضع CareWare
     for c in keep:
         if c in df.columns and c not in base_cols:
             base_cols.append(c)

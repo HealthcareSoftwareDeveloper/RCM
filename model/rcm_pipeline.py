@@ -2,7 +2,7 @@
 """
 rcm_pipeline.py
 تنظيف البيانات + هندسة الخصائص + تصنيف أسباب الرفض
-Namaa Predictor · Makkah Health Cluster · Revenue Development Performance
+ARCH Predict · ARCH Systems
 
 يُستخدم من train_model.py و score_batch.py و powerbi_python_script.py
 لضمان أن نفس المنطق يُطبّق أثناء التدريب وأثناء التنبؤ.
@@ -543,3 +543,15 @@ def to_categorical(X: pd.DataFrame, vocab: dict) -> pd.DataFrame:
         n = len(vocab[f"cats_{col}"])
         out[col] = pd.Categorical(out[col], categories=list(range(n)))
     return out
+
+
+def load_any(data: str | None = None, approvals: str | None = None,
+             eligibility: str | None = None) -> pd.DataFrame:
+    """مدخل موحّد للبيانات: الملف القانوني (--data) أو تصديرا CareWare
+    (--approvals [+ --eligibility]) عبر طبقة المصادر careware_sources."""
+    if approvals:
+        import careware_sources as CS
+        return CS.load_sources(approvals, eligibility)
+    if not data:
+        raise SystemExit("حدّد --data أو --approvals")
+    return load_raw(data)

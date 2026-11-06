@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- شعار ARCH Predict: قوس ARCH بحجر عقد ذهبي، وتحته مسار تنبؤ صاعد -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" role="img" aria-label="ARCH Predict">
+  <path d="M8 44V22a16 16 0 0 1 32 0v22" fill="none" stroke="#1b6fa8" stroke-width="4.5"/>
+  <rect x="20" y="3" width="8" height="10" rx="1.5" fill="#C8962E"/>
+  <path d="M15 37l6-7 5 4 8-10" fill="none" stroke="#0b7a5e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="34" cy="24" r="2.6" fill="#0b7a5e"/>
+</svg>
